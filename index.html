@@ -554,147 +554,303 @@
       <p class="subh">Mapped onto plans (Set Entitlements)</p>
       <p class="note" style="margin:0"><b>Starter</b> Fixed 50 GB (extension Switch Plan) · <b>Pro</b> Variable 250 GB incl, extra via <span class="mono">Storage — Per Unit</span> (extension User-can-extend, max 2,000 GB) · <b>Business</b> Fixed 500 GB (extension Buy Add-on → Extra Storage 50GB). Full mapping in the plan cards.</p>
     </div>
-    <div class="grid two">
-      <div class="fillcard">
-        <p class="meta">Metered Consumption · Quantity</p>
-        <h3 style="margin:2px 0 8px">API Calls</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
-          <tr><td>Feature Name</td><td><b>API Calls</b></td></tr>
-          <tr><td>Usage Metric</td><td>API Calls (calls)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Consumption · Quantity</p>
+      <h3 style="margin:2px 0 10px">API Calls</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+        <tr><td>Feature Name</td><td><b>API Calls</b></td></tr>
+        <tr><td>Describe this feature</td><td>Outbound/inbound API request volume.</td></tr>
+        <tr><td>Usage Metric</td><td>API Calls (calls) — event <span class="mono">API Call Made</span> → metric <span class="mono">API Calls</span> (count)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries (NG · US · UK · KE · DE).</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">10,000 · 50,000 · 100,000 · Unlimited.</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">API Calls — Tiered</span> (Tiered · price per call)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Tier (calls)</th><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td>0 – 50,000</td><td class="mono">₦3.00</td><td class="mono">$0.0020</td><td class="mono">£0.0016</td><td class="mono">KSh 0.26</td><td class="mono">€0.0018</td></tr>
+          <tr><td>50,001 – 200,000</td><td class="mono">₦2.25</td><td class="mono">$0.0015</td><td class="mono">£0.0012</td><td class="mono">KSh 0.20</td><td class="mono">€0.0014</td></tr>
+          <tr><td>200,001 +</td><td class="mono">₦1.50</td><td class="mono">$0.0010</td><td class="mono">£0.0008</td><td class="mono">KSh 0.13</td><td class="mono">€0.0009</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 10,000 · 50,000 · 100,000 · Unlimited.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Metered Consumption · Quantity</p>
-        <h3 style="margin:2px 0 8px">SMS Notifications</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
-          <tr><td>Feature Name</td><td><b>SMS Notifications</b></td></tr>
-          <tr><td>Usage Metric</td><td>SMS (messages)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>Pay with Pre-paid Credit</b> — draw usage from the Nimbus Credits balance instead of billing (set in the plan's Pay-for-what-you-use mapping).</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Pro</b> Pay-for-what-you-use · scheme API Calls — Tiered · min committed 10,000 · max 1,000,000 · extension Pay as you go · time-based access Mon–Fri 09:00–17:00. <b>Business</b> Variable · 100,000 incl · extension Auto extend.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Consumption · Quantity</p>
+      <h3 style="margin:2px 0 10px">SMS Notifications</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+        <tr><td>Feature Name</td><td><b>SMS Notifications</b></td></tr>
+        <tr><td>Describe this feature</td><td>Transactional SMS messages sent.</td></tr>
+        <tr><td>Usage Metric</td><td>SMS (messages) — event <span class="mono">SMS Sent</span> → metric <span class="mono">SMS Sent</span> (sum · segments)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">500 · 2,000 · 5,000.</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">SMS — Stair-Step</span> (Stair-Step · price per SMS)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Tier (messages)</th><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td>0 – 1,000</td><td class="mono">₦75</td><td class="mono">$0.050</td><td class="mono">£0.040</td><td class="mono">KSh 6.50</td><td class="mono">€0.046</td></tr>
+          <tr><td>1,001 – 5,000</td><td class="mono">₦60</td><td class="mono">$0.040</td><td class="mono">£0.032</td><td class="mono">KSh 5.20</td><td class="mono">€0.037</td></tr>
+          <tr><td>5,001 +</td><td class="mono">₦45</td><td class="mono">$0.030</td><td class="mono">£0.024</td><td class="mono">KSh 3.90</td><td class="mono">€0.028</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 500 · 2,000 · 5,000.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Range</p>
-        <h3 style="margin:2px 0 8px">Support Hours</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Support Hours</b></td></tr>
-          <tr><td>Usage Metric</td><td>Support Hours (hours)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
-          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">— (single scheme; or Pay with Pre-paid Credit if you prefer to draw from the wallet).</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Pro</b> Variable · 2,000 incl · additional option 5,000 · scheme SMS — Stair-Step · extension User can extend (bill After extension). <b>Business</b> Variable · 10,000 incl · extension Auto Extend with Add-on (variant).</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Range</p>
+      <h3 style="margin:2px 0 10px">Support Hours</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Support Hours</b></td></tr>
+        <tr><td>Describe this feature</td><td>Included hands-on support hours per cycle.</td></tr>
+        <tr><td>Usage Metric</td><td>Support Hours (hours) — event <span class="mono">Support Time Logged</span> → metric <span class="mono">Support Hours Used</span> (sum · hours)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+        <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Range)</p>
+      <p class="note" style="margin:0 0 8px">Minimum 0 · Maximum 40 hours.</p>
+      <p class="subh">Setup → Pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>Included in the plan fee</b> (mapped Fixed) — no separate per-hour charge in the canonical set.</p>
+      <p class="subh">Alternate pricing (optional — only if you sell extra hours)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th>Scheme · per hour</th><th class="mono">NG</th><th class="mono">US</th><th class="mono">UK</th><th class="mono">KE</th><th class="mono">DE</th></tr></thead><tbody>
+          <tr><td><span class="mono">Support — Per Hour</span> (Per Unit)</td><td class="mono">₦75,000</td><td class="mono">$50</td><td class="mono">£40</td><td class="mono">KSh 6,500</td><td class="mono">€46</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 40 hours.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Boolean</p>
-        <h3 style="margin:2px 0 8px">Two-Factor Auth (2FA)</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Boolean</td></tr>
-          <tr><td>Feature Name</td><td><b>Two-Factor Auth</b></td></tr>
-          <tr><td>Describe this feature</td><td>Account 2FA / MFA security.</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Starter</b> Fixed 5 hours · <b>Pro</b> Fixed 20 hours · <b>Business</b> Fixed 40 hours.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Boolean</p>
+      <h3 style="margin:2px 0 10px">Two-Factor Auth (2FA)</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Boolean</td></tr>
+        <tr><td>Feature Name</td><td><b>Two-Factor Auth</b></td></tr>
+        <tr><td>Describe this feature</td><td>Account 2FA / MFA security.</td></tr>
+        <tr><td>Usage Metric</td><td>— (Boolean has no metric)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>— (Boolean has no packaging)</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages</p>
+      <p class="note" style="margin:0 0 8px">— (on/off only; no packages).</p>
+      <p class="subh">Setup → Pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>Included — no charge</b> (Boolean features allow Fixed pricing only; here it's bundled into every plan at no fee).</p>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Starter · Pro · Business</b> — Fixed (Boolean), Access enabled. Not extendable.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Boolean</p>
+      <h3 style="margin:2px 0 10px">Advanced Analytics</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Boolean</td></tr>
+        <tr><td>Feature Name</td><td><b>Advanced Analytics</b></td></tr>
+        <tr><td>Describe this feature</td><td>Usage dashboards + export.</td></tr>
+        <tr><td>Usage Metric</td><td>—</td></tr>
+        <tr><td>Entitlement Packaging</td><td>—</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages</p>
+      <p class="note" style="margin:0 0 8px">— (on/off only).</p>
+      <p class="subh">Setup → Pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>Included — no charge</b> (bundled on Pro &amp; Business).</p>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Pro · Business</b> — Fixed (Boolean), Access enabled. Not on Starter. <span class="note">⚠ intended to depend on the Pro tier — "Dependent" packaging is disabled in the create UI, so that gating can't be set (flag).</span></p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Boolean · paid enable</p>
+      <h3 style="margin:2px 0 10px">SSO (SAML / OIDC)</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Boolean</td></tr>
+        <tr><td>Feature Name</td><td><b>SSO (SAML / OIDC)</b></td></tr>
+        <tr><td>Describe this feature</td><td>Enterprise single sign-on.</td></tr>
+        <tr><td>Usage Metric</td><td>—</td></tr>
+        <tr><td>Entitlement Packaging</td><td>—</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages</p>
+      <p class="note" style="margin:0 0 8px">— (on/off only).</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">SSO — Fixed Enable</span> (Fixed · per month, to enable)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦3,000</td><td class="mono">$2.00</td><td class="mono">£1.60</td><td class="mono">KSh 260</td><td class="mono">€1.85</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0">No usage metric / packaging — Boolean has no inputs. On/off only, not extendable.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Boolean</p>
-        <h3 style="margin:2px 0 8px">Advanced Analytics</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Boolean</td></tr>
-          <tr><td>Feature Name</td><td><b>Advanced Analytics</b></td></tr>
-          <tr><td>Describe this feature</td><td>Usage dashboards + export.</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Pro</b> Fixed (Boolean) · paid enable via SSO — Fixed Enable (+fee). <b>Business</b> Fixed · Enabled (included). Not on Starter.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Quantity</p>
+      <h3 style="margin:2px 0 10px">Projects</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Projects</b></td></tr>
+        <tr><td>Describe this feature</td><td>Number of active projects/workspaces.</td></tr>
+        <tr><td>Usage Metric</td><td>Projects (projects) — event <span class="mono">Project Created</span> → metric <span class="mono">Projects</span> (count)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">5 (default) · 20 · 100 · Unlimited.</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">Projects — Per Unit</span> (Per Unit · price per project)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦1,500</td><td class="mono">$1.00</td><td class="mono">£0.80</td><td class="mono">KSh 130</td><td class="mono">€0.92</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Edge to test</b>: "Dependent" packaging is disabled in the create UI — you can't build a feature gated on another. Flag it; treat Advanced Analytics as a plain Boolean for now.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Boolean · paid enable</p>
-        <h3 style="margin:2px 0 8px">SSO (SAML / OIDC)</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Boolean</td></tr>
-          <tr><td>Feature Name</td><td><b>SSO (SAML / OIDC)</b></td></tr>
-          <tr><td>Describe this feature</td><td>Enterprise single sign-on.</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Starter</b> Fixed 5 · <b>Pro</b> Fixed 20 · <b>Business</b> Fixed 100.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Range</p>
+      <h3 style="margin:2px 0 10px">Bandwidth</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Bandwidth</b></td></tr>
+        <tr><td>Describe this feature</td><td>Data transfer per cycle, banded.</td></tr>
+        <tr><td>Usage Metric</td><td>Bandwidth (GB) — event <span class="mono">Bandwidth Sample</span> → metric <span class="mono">Bandwidth Used</span> (sum · gb)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Range)</p>
+      <p class="note" style="margin:0 0 8px">Minimum 0 · Maximum 5,000 GB.</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">Bandwidth — Tiered</span> (Tiered · price per GB)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Tier (GB)</th><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td>Tier 1 · 0 – 500</td><td class="mono">incl</td><td class="mono">incl</td><td class="mono">incl</td><td class="mono">incl</td><td class="mono">incl</td></tr>
+          <tr><td>Tier 2 · 501 – 2,000</td><td class="mono">₦75</td><td class="mono">$0.050</td><td class="mono">£0.040</td><td class="mono">KSh 6.50</td><td class="mono">€0.046</td></tr>
+          <tr><td>Tier 3 · 2,001 – 5,000</td><td class="mono">₦45</td><td class="mono">$0.030</td><td class="mono">£0.024</td><td class="mono">KSh 3.90</td><td class="mono">€0.028</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0">Not included by default — on Pro it's a <b>paid enable</b> via the Fixed scheme <span class="mono">SSO — Fixed Enable</span> (+fee).</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Quantity</p>
-        <h3 style="margin:2px 0 8px">Projects</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Projects</b></td></tr>
-          <tr><td>Usage Metric</td><td>Projects (projects)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Pro</b> Fixed (Range) · Tier 2 (≤2,000 GB) · scheme Bandwidth — Tiered. <b>Business</b> Fixed · Tier 3 (≤5,000 GB). Not on Starter.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Consumption · Quantity · hard block</p>
+      <h3 style="margin:2px 0 10px">Email Sends</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+        <tr><td>Feature Name</td><td><b>Email Sends</b></td></tr>
+        <tr><td>Describe this feature</td><td>Transactional emails sent per cycle.</td></tr>
+        <tr><td>Usage Metric</td><td>Emails (emails) — event <span class="mono">Email Sent</span> → metric <span class="mono">Emails Sent</span> (count)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">100 · 1,000 · 10,000 · 50,000.</p>
+      <p class="subh">Setup → Pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>No overage → hard block</b> at the cap. No extra-capacity scheme — usage stops at the included quantity (verify the block, scenario F).</p>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Starter</b> Fixed 100 · <b>Pro</b> Fixed 1,000 · <b>Business</b> Fixed 10,000 — all hard-block at the cap.</p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Quantity</p>
+      <h3 style="margin:2px 0 10px">Webhooks</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Webhooks</b></td></tr>
+        <tr><td>Describe this feature</td><td>Outbound webhook event deliveries.</td></tr>
+        <tr><td>Usage Metric</td><td>Webhook Events (events) — event <span class="mono">Webhook Delivered</span> → metric <span class="mono">Webhook Events</span> (count)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries.</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">1,000 · 10,000 · Unlimited.</p>
+      <p class="subh">Setup → Pricing</p>
+      <p class="note" style="margin:0 0 8px"><b>Included</b> in the plan fee (allowance) — no separate charge.</p>
+      <p class="subh">Alternate pricing</p>
+      <p class="note" style="margin:0 0 8px">—</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Business</b> Fixed · 10,000 events. Not on Starter/Pro. <span class="note">⚠ intended to depend on API Calls — "Dependent" packaging is disabled in the create UI, so that gating can't be set (flag).</span></p>
+    </div>
+
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Range · time-based</p>
+      <h3 style="margin:2px 0 10px">Peak-Hours Access</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Peak-Hours Access</b></td></tr>
+        <tr><td>Describe this feature</td><td>Priority compute access during peak windows.</td></tr>
+        <tr><td>Usage Metric</td><td>Peak Hours (hours) — event <span class="mono">Peak Access Session</span> → metric <span class="mono">Peak Hours Used</span> (sum · hours)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries (used on Business).</p>
+      <p class="subh">Setup → Entitlement Packages (Range)</p>
+      <p class="note" style="margin:0 0 8px">Minimum 0 · Maximum 100 hours.</p>
+      <p class="subh">Setup → Pricing — Time-based (peak vs off-peak · price per hour)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Window</th><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td>Peak (Mon–Fri 09:00–17:00)</td><td class="mono">₦3,000</td><td class="mono">$2.00</td><td class="mono">£1.60</td><td class="mono">KSh 260</td><td class="mono">€1.85</td></tr>
+          <tr><td>Off-peak</td><td class="mono">₦750</td><td class="mono">$0.50</td><td class="mono">£0.40</td><td class="mono">KSh 65</td><td class="mono">€0.46</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 5 (default) · 20 · 100 · Unlimited. Additional via <span class="mono">Projects — Per Unit</span>.</p>
       </div>
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Range</p>
-        <h3 style="margin:2px 0 8px">Bandwidth</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Bandwidth</b></td></tr>
-          <tr><td>Usage Metric</td><td>Bandwidth (GB)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
-        </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 5,000 GB. Banded pricing via <span class="mono">Bandwidth — Tiered</span> (Tier 2 / Tier 3).</p>
-      </div>
-      <div class="fillcard">
-        <p class="meta">Metered Consumption · Quantity · hard block</p>
-        <h3 style="margin:2px 0 8px">Email Sends</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
-          <tr><td>Feature Name</td><td><b>Email Sends</b></td></tr>
-          <tr><td>Usage Metric</td><td>Emails (emails)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
-        </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 100 · 1,000 · 10,000 · 50,000. <b>No overage → hard block</b> at the cap (no extra-pricing scheme).</p>
-      </div>
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Quantity</p>
-        <h3 style="margin:2px 0 8px">Webhooks</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Webhooks</b></td></tr>
-          <tr><td>Usage Metric</td><td>Webhook Events (events)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
-        </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 1,000 · 10,000 · Unlimited. Intended to <b>depend on API Calls</b> — that gating can't be set (Dependent disabled), so flag it.</p>
-      </div>
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Range · time-based</p>
-        <h3 style="margin:2px 0 8px">Peak-Hours Access</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Peak-Hours Access</b></td></tr>
-          <tr><td>Usage Metric</td><td>Peak Hours (hours)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
-        </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 100 hours. Scope access + pricing to a window via <b>Time-based Access</b> / <b>Time-based Pricing</b> (used on Business · scenario F8).</p>
-      </div>
+      <p class="subh">Alternate pricing / access</p>
+      <p class="note" style="margin:0 0 8px"><b>Time-based Access</b> config — recurring calendar schedule, Weekly, Mon–Fri 09:00–17:00; Add-on behavior Extend. (Time-based Pricing modal drives the peak/off-peak rates above.)</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Business</b> Fixed (Range) · window-scoped · Time-based Access + Pricing (scenario F8). Not on Starter/Pro.</p>
     </div>
 
     <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Feature setup — detailed flow <span class="mono" style="color:var(--muted);font-weight:400;font-size:12px">— availability · packages · pricing · run before mapping to any plan</span></p>

@@ -993,7 +993,7 @@
     </div>
 
     <div class="scen-group">
-      <div class="gh"><span class="tag">D</span> Reflection <span class="gh-note">— the cross-check that runs for every A / B / E / F scenario (L5 / QA owns)</span></div>
+      <div class="gh"><span class="tag">D</span> Reflection <span class="gh-note">— the cross-check that runs for every A / B / E / F / G scenario (L5 / QA owns)</span></div>
       <div class="checks" data-group="D">
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">D1</span> <span class="desc"><b>Sales list</b> — product, type, frequency, SID/QID all populated</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">D2</span> <span class="desc"><b>Billing history</b> — invoices carry the subscription SID; transactions carry the Invoice ID</span></div></label>
@@ -1037,6 +1037,17 @@
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">F6</span> <span class="desc"><b>Extend: extend-feature</b> — upgrade an existing feature's tier (proration, no old-plan credit; boolean/tier-less rejected) → ExtendOffer</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">F7</span> <span class="desc"><b>Dependent entitlement</b> — a feature gated on another (<span class="mono">depends_on</span>) is only available when its parent is enabled</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">F8</span> <span class="desc"><b>Time-based feature</b> — an entitlement scoped to a window (<span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>) or occurrence/booking anchor: access and price honour the window (e.g. peak vs off-peak) — verify the correct rate/access inside vs outside it</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">G</span> Billing: pre-paid credit &amp; rewards <span class="gh-note">— balance operations · full edge-case checklist (PC1–PC13) in §04</span></div>
+      <div class="checks" data-group="G">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">G1</span> <span class="desc"><b>Grant a balance</b> — grant <span class="mono">KES 20,000</span> of <b>Nimbus Credits</b> to Amina Wanjiru (#4); the customer's credit panel shows the new balance and a <em>grant</em> ledger entry</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">G2</span> <span class="desc"><b>Redeem</b> — redeem <span class="mono">KES 5,000</span>; balance drops to 15,000 · burn order promo → free → paid (FIFO) · <b>note it does NOT reduce any invoice</b> — it's a standalone ledger draw-down</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">G3</span> <span class="desc"><b>Reverse</b> — reverse that redemption: the debited lot is restored to 20,000 with a <em>reverse</em> ledger entry; reversing the same group a second time is rejected</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">G4</span> <span class="desc"><b>Reward points — earn then step down</b>: award <b>Nimbus Rewards</b> points on a purchase, then step the balance down by redeeming them (rewards reuse the same grant/redeem/reverse runtime as credit — verify earn increments and redeem decrements the points balance)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">G5</span> <span class="desc"><b>Edge sweep</b> — run the pre-paid credit edge cases <span class="mono">PC1–PC13</span> (§04): expiry, insufficient balance, currency mismatch, two-schemes-same-currency, rate-disabled, overdraft, acceptance-off, authz</span></div></label>
       </div>
     </div>
   </section>

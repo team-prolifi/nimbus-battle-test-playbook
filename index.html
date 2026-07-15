@@ -292,6 +292,11 @@
   <!-- 3 · CATALOG -->
   <section id="catalog">
     <div class="sec-head"><span class="sec-num">03</span><h2>Catalog to build</h2><p>every real product / feature / pricing type</p></div>
+    <p class="lede" style="margin-top:0"><b>Build in dependency order</b> — later artefacts reference earlier ones:
+      <span class="mono">1</span> pre-paid credit → <span class="mono">2</span> features → <span class="mono">3</span> add-ons →
+      <span class="mono">4</span> standard plans → <span class="mono">5</span> team plans → <span class="mono">6</span> one-off products / services.
+      Credit schemes underpin prepaid/consumption features; features &amp; add-ons must exist before a plan can map them;
+      team plans reference standard-plan licenses, so standard plans come first.</p>
     <div class="grid two">
       <div class="card">
         <p class="meta">Plans · recurring</p>
@@ -386,17 +391,29 @@
     <h3 style="margin:28px 0 10px;font-size:16px">Team users &amp; roles <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— invite under Settings → Team; one workstream each</span></h3>
     <div class="table-scroll">
       <table style="min-width:520px">
-        <thead><tr><th>Tester</th><th>Role</th><th>Login email</th></tr></thead>
+        <thead><tr><th>Tester</th><th>Membership</th><th>Rights (this run)</th><th>Login email</th></tr></thead>
         <tbody>
-          <tr><td>P1 · lead</td><td>Owner</td><td class="mono">prolifitest+nimbus@gmail.com</td></tr>
-          <tr><td>P2</td><td>Admin</td><td class="mono">prolifitest+admin@gmail.com</td></tr>
-          <tr><td>P3</td><td>Finance / Billing</td><td class="mono">prolifitest+finance@gmail.com</td></tr>
-          <tr><td>P4</td><td>Sales</td><td class="mono">prolifitest+sales@gmail.com</td></tr>
-          <tr><td>P5</td><td>Support / QA</td><td class="mono">prolifitest+support@gmail.com</td></tr>
+          <tr><td>P1 · lead</td><td>Owner</td><td>Admin (full)</td><td class="mono">prolifitest+nimbus@gmail.com</td></tr>
+          <tr><td>P2</td><td>Member</td><td>Admin (full)</td><td class="mono">prolifitest+admin@gmail.com</td></tr>
+          <tr><td>P3</td><td>Member</td><td>Admin (full)</td><td class="mono">prolifitest+finance@gmail.com</td></tr>
+          <tr><td>P4</td><td>Member</td><td>Admin (full)</td><td class="mono">prolifitest+sales@gmail.com</td></tr>
+          <tr><td>P5</td><td>Member</td><td>Admin (full)</td><td class="mono">prolifitest+support@gmail.com</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="lede" style="margin-top:8px">Assign each the closest RBAC role — running different roles also exercises permission gating. Invites land in the shared inbox, so anyone can accept them.</p>
+    <p class="lede" style="margin-top:8px"><b>This run: every user is active with full Admin rights</b> — RBAC/permission gating is a separate, comprehensive test later (we'll change these users' roles + permissions then). The role-named aliases (finance/sales/support) are just labels for now. Invites land in the shared inbox, so anyone can accept them.</p>
+
+    <div class="card" style="margin-top:16px">
+      <p class="meta">Gmail capture folders — one filter + label per alias (set up once in the shared account)</p>
+      <p style="font-size:13px;color:var(--ink-2);margin:0 0 10px">All aliases land in the single <span class="mono">prolifitest@gmail.com</span> inbox. In Gmail: <b>Settings → Filters → Create filter → To:</b> the alias → <b>Apply label</b> = its name, so each stream drops into its own folder. Create these 20:</p>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 4px" class="mono">MERCHANT &amp; USERS</p>
+      <div class="tokgrid"><span class="tok acc">+nimbus</span><span class="tok">+admin</span><span class="tok">+finance</span><span class="tok">+sales</span><span class="tok">+support</span></div>
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 4px" class="mono">OPERATING ENTITIES</p>
+      <div class="tokgrid"><span class="tok">+ops-ng</span><span class="tok">+ops-us</span><span class="tok">+ops-uk</span><span class="tok">+ops-ke</span><span class="tok">+ops-de</span></div>
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 4px" class="mono">CUSTOMERS</p>
+      <div class="tokgrid"><span class="tok">+chidi</span><span class="tok">+sarah</span><span class="tok">+james</span><span class="tok">+amina</span><span class="tok">+lukas</span><span class="tok">+zenith</span><span class="tok">+brightpath</span><span class="tok">+harbour</span><span class="tok">+savanna</span><span class="tok">+nordwind</span></div>
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 0">All shown as <span class="mono">prolifitest+&lt;label&gt;@gmail.com</span>. Add a <span class="mono">2</span> suffix (e.g. <span class="mono">+chidi2</span>) if you need a second fresh customer in the same country.</p>
+    </div>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Operating entities <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— one per country; Nigeria is created at registration</span></h3>
     <div class="table-scroll">
@@ -643,15 +660,15 @@
         </div>
       </div>
       <div class="card">
-        <p class="meta">Coupons &amp; manual discounts</p>
+        <p class="meta">Discounts — manual only this run</p>
         <div class="table-scroll" style="box-shadow:none;border:none">
           <table style="min-width:0">
             <tbody>
-              <tr><td class="mono">WELCOME10</td><td>coupon · 10% off</td></tr>
-              <tr><td class="mono">SAVE5K</td><td>coupon · NGN 5,000 off</td></tr>
               <tr><td>Manual %</td><td>15% off (offer settings)</td></tr>
-              <tr><td>Manual fixed</td><td>NGN 2,000 off</td></tr>
-              <tr><td>Price ramp</td><td>20% off first 3 periods</td></tr>
+              <tr><td>Manual fixed</td><td>NGN 2,000 off (offer settings)</td></tr>
+              <tr><td>Price ramp</td><td>20% off first 3 periods (intro ramp)</td></tr>
+              <tr><td class="mono" style="color:var(--muted)">coupons</td><td>deferred → later run</td></tr>
+              <tr><td class="mono" style="color:var(--muted)">cashback</td><td>deferred → later run</td></tr>
             </tbody>
           </table>
         </div>
@@ -663,10 +680,10 @@
   <section id="scenarios">
     <div class="sec-head"><span class="sec-num">05</span><h2>Scenario matrix</h2><p>tick as you clear · layer modifiers where noted</p></div>
     <p class="lede" style="margin-top:0">Layer these modifiers onto rows where relevant:
-      <span class="tok">trial</span> <span class="tok">price ramp</span> <span class="tok">coupon</span>
-      <span class="tok">manual discount</span> <span class="tok">installment</span>
-      <span class="tok">tiered / metered</span> <span class="tok">individual vs company</span>
-      <span class="tok">online vs offline</span></p>
+      <span class="tok">trial</span> <span class="tok">price ramp</span> <span class="tok acc">manual discount</span>
+      <span class="tok">installment</span> <span class="tok">tiered / metered</span>
+      <span class="tok">individual vs company</span> <span class="tok">online vs offline</span>
+      <span class="tok" style="color:var(--muted)">coupon / cashback → later run</span></p>
 
     <div class="scen-group">
       <div class="gh"><span class="tag">A</span> Merchant-initiated selling</div>
@@ -731,6 +748,7 @@
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">E8</span> <span class="desc"><b>Inventory</b>: stock depletes on each sale, blocks at zero, restock re-enables selling</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">E9</span> <span class="desc"><b>Sell-to constraints</b>: per-country and per-entity availability enforced at both assign-plan and public checkout</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">E10</span> <span class="desc"><b>Pricing-scope resolution</b>: a <b>global</b> plan charges its single price/currency in every country; a <b>per-country</b> plan charges each country's own price; a <b>global + overrides</b> plan (Nimbus Hybrid) uses NG (₦) &amp; UK (£) overrides and falls back to the USD global for US/KE/DE — confirm the charged amount + currency at checkout for each</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E11</span> <span class="desc"><b>Global pricing gated on global operations</b>: with the merchant's <b>global operations OFF</b>, global pricing / global sell-to must be <b>disallowed</b> (not silently accepted) — a plan can only go global once global operations is activated. Verify the block with it off, then that it's allowed once on</span></div></label>
       </div>
     </div>
 

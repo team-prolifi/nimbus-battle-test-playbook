@@ -535,24 +535,30 @@
       <p class="note" style="margin:10px 0 0">Setup mirrors the credit scheme (availability · redemption rate per currency · packages). Set the same 1:1 rate per currency. Lower-traffic edge type — treat findings as discovery.</p>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Usage metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— create these FIRST · metered features require one</span></h3>
-    <p class="lede" style="margin-top:0">A metered feature (allowance or consumption) needs a <b>Usage Metric</b> to exist before you can create it — the metric supplies the unit label. Create these nine, then build the features. (Boolean features — 2FA, Advanced Analytics, SSO — need no metric.)</p>
+    <h3 style="margin:28px 0 10px;font-size:16px">Usage metering &amp; event metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— system-wide metering registry · build FIRST (metered features bind to a metric)</span></h3>
+    <p class="lede" style="margin-top:0">Prolifi has a <b>general, merchant-facing metering system</b> (Manage → <span class="mono">Usage → Events / Metrics / Event Streams</span>). It is
+      <b>not</b> credit-specific — it measures any usage. The chain: an <b>Event type</b> (+ typed properties) defines <em>what can happen</em> →
+      a <b>Metric</b> aggregates those events into a number (<span class="mono">count · count_unique · sum · max · latest · custom</span>, aggregating on a property) →
+      <b>Occurrences</b> (event streams) are the "it happened" records → a metered feature is measured by pointing its <b>Usage Metric</b> at one.
+      Build the event + metric for each metered feature <b>before</b> the feature (the feature's "Usage Metric" dropdown reads this registry).</p>
     <div class="table-scroll">
-      <table style="min-width:480px">
-        <thead><tr><th>Metric name</th><th class="mono">Unit</th><th>Used by</th></tr></thead>
+      <table style="min-width:920px">
+        <thead><tr><th>Event type <span class="mono" style="font-weight:400;color:var(--muted)">(level)</span></th><th>Key properties</th><th>Metric · unit</th><th class="mono">Aggregation</th><th>Measures feature</th></tr></thead>
         <tbody>
-          <tr><td>Storage</td><td class="mono">GB</td><td>Cloud Storage</td></tr>
-          <tr><td>API Calls</td><td class="mono">calls</td><td>API Calls</td></tr>
-          <tr><td>SMS</td><td class="mono">messages</td><td>SMS Notifications</td></tr>
-          <tr><td>Support Hours</td><td class="mono">hours</td><td>Support Hours</td></tr>
-          <tr><td>Projects</td><td class="mono">projects</td><td>Projects</td></tr>
-          <tr><td>Bandwidth</td><td class="mono">GB</td><td>Bandwidth</td></tr>
-          <tr><td>Emails</td><td class="mono">emails</td><td>Email Sends</td></tr>
-          <tr><td>Webhook Events</td><td class="mono">events</td><td>Webhooks</td></tr>
-          <tr><td>Peak Hours</td><td class="mono">hours</td><td>Peak-Hours Access</td></tr>
+          <tr><td>Storage Snapshot <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">size_gb : float</td><td>Storage Used · GB</td><td class="mono">max · size_gb</td><td>Cloud Storage</td></tr>
+          <tr><td>API Call Made <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">endpoint : string</td><td>API Calls · calls</td><td class="mono">count</td><td>API Calls</td></tr>
+          <tr><td>SMS Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">segments : number</td><td>SMS Sent · messages</td><td class="mono">sum · segments</td><td>SMS Notifications</td></tr>
+          <tr><td>Support Time Logged <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>Support Hours Used · hours</td><td class="mono">sum · hours</td><td>Support Hours</td></tr>
+          <tr><td>Project Created <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Projects · projects</td><td class="mono">count</td><td>Projects</td></tr>
+          <tr><td>Bandwidth Sample <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">gb : float</td><td>Bandwidth Used · GB</td><td class="mono">sum · gb</td><td>Bandwidth</td></tr>
+          <tr><td>Email Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Emails Sent · emails</td><td class="mono">count</td><td>Email Sends</td></tr>
+          <tr><td>Webhook Delivered <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Webhook Events · events</td><td class="mono">count</td><td>Webhooks</td></tr>
+          <tr><td>Peak Access Session <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>Peak Hours Used · hours</td><td class="mono">sum · hours</td><td>Peak-Hours Access</td></tr>
+          <tr><td>Prepaid Credit Consumed <span class="mono" style="color:var(--muted)">· customer</span></td><td class="mono">amount : float · currency : string</td><td>Credits Consumed · credits</td><td class="mono">sum · amount</td><td><span class="note">credit — ⚠ not emitted (PC14)</span></td></tr>
         </tbody>
       </table>
     </div>
+    <p class="note" style="margin:8px 0 0"><b>How it's managed:</b> event types at <span class="mono">Usage → Events</span> (level = <span class="mono">customer_level</span> or <span class="mono">subscription_level</span>; add typed properties); metrics at <span class="mono">Usage → Metrics</span> (<span class="mono">metric_name</span> unique per merchant; <span class="mono">sum/max</span> require a numeric <span class="mono">aggregate_on</span> property that exists on the event; there's <b>Test computation</b> + <b>Batch compute</b>). Occurrences are logged to <span class="mono">Usage → Event Streams</span> (single or bulk). <b>Aggregation types to spread across your metrics: count · sum · max</b> (plus count_unique / latest / custom if you want fuller coverage). ⚠ Occurrences have <b>no idempotency key</b> — double-logging isn't prevented (test + flag).</p>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Features <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Features → Create · define once, map per plan</span></h3>
     <p class="lede" style="margin-top:0">The <b>create form captures no price or availability</b> — only the feature's identity + type. You pick the
@@ -1057,7 +1063,7 @@
       <div class="card">
         <p class="meta">Build order recap</p>
         <ul style="margin:0">
-          <li>Usage metrics → features → add-ons → reward points → <b>seat plans</b> → standard plans → team plan → occurrence → one-off products.</li>
+          <li>Usage events &amp; metrics → features → add-ons → reward points → <b>seat plans</b> → standard plans → team plan → occurrence → one-off products.</li>
           <li>Nothing has a price until its <b>setup wizard</b>; publish needs the OTP from the shared inbox.</li>
           <li>Use these exact names, prices &amp; emails everywhere so reflection (group D) lines up.</li>
         </ul>
@@ -1163,6 +1169,19 @@
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">G3</span> <span class="desc"><b>Reverse</b> — reverse that redemption: the debited lot is restored to 20,000 with a <em>reverse</em> ledger entry; reversing the same group a second time is rejected</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">G4</span> <span class="desc"><b>Reward points — earn then step down</b>: award <b>Nimbus Rewards</b> points on a purchase, then step the balance down by redeeming them (rewards reuse the same grant/redeem/reverse runtime as credit — verify earn increments and redeem decrements the points balance)</span></div></label>
         <label class="chk"><input type="checkbox"><div class="body"><span class="id">G5</span> <span class="desc"><b>Edge sweep</b> — run the pre-paid credit edge cases <span class="mono">PC1–PC14</span> (§04): expiry, insufficient balance, currency mismatch, two-schemes-same-currency, rate-disabled, overdraft, acceptance-off, authz, and <b>no usage event on credit ops</b> (PC14)</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">H</span> Usage metering &amp; event metrics <span class="gh-note">— the system-wide metering registry (Manage → Usage) · build data in §04</span></div>
+      <div class="checks" data-group="H">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H1</span> <span class="desc"><b>Register event types</b> — create both a <span class="mono">subscription_level</span> event (e.g. API Call Made, with typed properties) and a <span class="mono">customer_level</span> event; duplicate <span class="mono">event_id</span> per merchant → rejected</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H2</span> <span class="desc"><b>Define metrics</b> — one per aggregation rule: <span class="mono">count</span> (API Calls), <span class="mono">sum · segments</span> (SMS Sent), <span class="mono">max · size_gb</span> (Storage Used); <span class="mono">sum/max</span> require a numeric <span class="mono">aggregate_on</span> that exists on the event; <span class="mono">metric_name</span> unique per merchant (dup → 422)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H3</span> <span class="desc"><b>Log occurrences</b> — record event streams (single + bulk) with typed property values; property values must match the event's declared types</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H4</span> <span class="desc"><b>Verify computation</b> — Test computation / Batch compute rolls the logged occurrences into the right number over a period (count = #streams; sum/max read the property); filters restrict to matching occurrences</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H5</span> <span class="desc"><b>Bind to a feature</b> — point a metered feature's <b>Usage Metric</b> at one of these metrics; confirm the feature's usage reads from it (the feature → setting → metric → event chain)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H6</span> <span class="desc"><b>⚠ Producers that don't emit</b> — after a credit grant/redeem/reverse, confirm <b>no occurrence</b> appears for "Prepaid Credit Consumed" (credit isn't wired into metering — PC14 finding). Note any other action expected to meter but doesn't.</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">H7</span> <span class="desc"><b>⚠ Idempotency</b> — log the same occurrence twice; occurrences have no unique/idempotency key, so it double-counts in the metric — flag</span></div></label>
       </div>
     </div>
   </section>

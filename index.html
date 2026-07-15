@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nimbus Battle-Test Playbook</title>
+<style>
+  :root {
+    --ground: #FBFAF7;
+    --surface: #FFFFFF;
+    --surface-2: #F4F1EB;
+    --ink: #1E1A16;
+    --ink-2: #423C34;
+    --muted: #6B645B;
+    --line: #E6E1D8;
+    --line-2: #D8D2C6;
+    --accent: #EC5B1E;
+    --accent-ink: #B8410F;
+    --accent-wash: #FBEEE6;
+    --good: #1C8A5B;
+    --good-wash: #E6F2EB;
+    --warn: #B57E00;
+    --warn-wash: #F6EED8;
+    --crit: #CF3A3A;
+    --crit-wash: #F8E6E4;
+    --l1: #5566D6; --l2: #0E8E82; --l3: #8257E0; --l4: #B57E00; --l5: #D24E6C;
+    --shadow: 0 1px 2px rgba(30,26,22,.05), 0 6px 20px -12px rgba(30,26,22,.18);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --maxw: 1080px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #16130E; --surface: #1F1B15; --surface-2: #262119;
+      --ink: #F3EEE5; --ink-2: #D8D0C3; --muted: #A79E90;
+      --line: #322C22; --line-2: #3E372B;
+      --accent: #FF7A43; --accent-ink: #FF9463; --accent-wash: #2A1C12;
+      --good: #4BC08A; --good-wash: #17281F; --warn: #E0AE49; --warn-wash: #2A2313;
+      --crit: #F06C6C; --crit-wash: #2C1815;
+      --l1: #8B98F0; --l2: #45BEB1; --l3: #AF8CF5; --l4: #E0AE49; --l5: #F080A0;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #FBFAF7; --surface: #FFFFFF; --surface-2: #F4F1EB;
+    --ink: #1E1A16; --ink-2: #423C34; --muted: #6B645B; --line: #E6E1D8; --line-2: #D8D2C6;
+    --accent: #EC5B1E; --accent-ink: #B8410F; --accent-wash: #FBEEE6;
+    --good: #1C8A5B; --good-wash: #E6F2EB; --warn: #B57E00; --warn-wash: #F6EED8;
+    --crit: #CF3A3A; --crit-wash: #F8E6E4;
+    --l1: #5566D6; --l2: #0E8E82; --l3: #8257E0; --l4: #B57E00; --l5: #D24E6C;
+  }
+  :root[data-theme="dark"] {
+    --ground: #16130E; --surface: #1F1B15; --surface-2: #262119;
+    --ink: #F3EEE5; --ink-2: #D8D0C3; --muted: #A79E90; --line: #322C22; --line-2: #3E372B;
+    --accent: #FF7A43; --accent-ink: #FF9463; --accent-wash: #2A1C12;
+    --good: #4BC08A; --good-wash: #17281F; --warn: #E0AE49; --warn-wash: #2A2313;
+    --crit: #F06C6C; --crit-wash: #2C1815;
+    --l1: #8B98F0; --l2: #45BEB1; --l3: #AF8CF5; --l4: #E0AE49; --l5: #F080A0;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55;
+    -webkit-font-smoothing: antialiased; font-size: 15px;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px 96px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; letter-spacing: -.02em; }
+  a { color: var(--accent-ink); }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---- Header ---- */
+  header.masthead {
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 120% at 100% 0%, var(--accent-wash) 0%, transparent 55%);
+  }
+  .masthead-inner { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 34px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent-ink); margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before {
+    content: ""; width: 26px; height: 2px; background: var(--accent); display: inline-block;
+  }
+  h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.04; }
+  h1 .sub { color: var(--muted); font-weight: 600; }
+  .lede { color: var(--ink-2); max-width: 62ch; margin: 16px 0 26px; font-size: 16.5px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+    background: var(--surface); border: 1px solid var(--line-2); border-radius: 999px;
+    font-size: 13px; box-shadow: var(--shadow);
+  }
+  .chip b { font-weight: 700; }
+  .chip .k { color: var(--muted); font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+  /* ---- Sections ---- */
+  section { margin-top: 46px; scroll-margin-top: 20px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+  .sec-num {
+    font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--accent);
+    border: 1px solid var(--line-2); border-radius: 8px; padding: 3px 9px; background: var(--surface);
+  }
+  h2 { font-size: 22px; font-weight: 750; }
+  .sec-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  /* ---- Callout ---- */
+  .callout {
+    border: 1px solid var(--line-2); border-left: 4px solid var(--crit);
+    background: var(--crit-wash); border-radius: 12px; padding: 18px 20px; margin-top: 26px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .callout .ic { font-size: 20px; line-height: 1.3; }
+  .callout h3 { font-size: 15px; margin-bottom: 6px; }
+  .callout p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .callout code { font-family: var(--mono); font-size: 12.5px; background: var(--surface); padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line-2); }
+
+  /* ---- Cards / grid ---- */
+  .grid { display: grid; gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: 15px; margin-bottom: 4px; }
+  .card .meta { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+  .card ul { margin: 10px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; }
+  .card ul li { margin: 4px 0; }
+
+  /* ---- Tables ---- */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 560px; }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); background: var(--surface-2); font-weight: 600; position: sticky; top: 0;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.mono, th.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---- Timeline ---- */
+  .steps { display: grid; gap: 2px; counter-reset: step; }
+  .step {
+    display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 14px 0;
+    border-bottom: 1px dashed var(--line); align-items: start;
+  }
+  .step:last-child { border-bottom: none; }
+  .step .n {
+    font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--surface);
+    background: var(--accent); width: 30px; height: 30px; border-radius: 9px;
+    display: grid; place-items: center;
+  }
+  .step h3 { font-size: 15px; margin-bottom: 3px; }
+  .step p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .step code { font-family: var(--mono); font-size: 12.5px; color: var(--accent-ink); }
+
+  /* ---- Scenario checklists ---- */
+  .scen-group { margin-top: 16px; }
+  .scen-group > .gh {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    font-weight: 700; font-size: 15px;
+  }
+  .scen-group > .gh .tag {
+    font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--surface);
+    background: var(--ink); width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center;
+  }
+  .scen-group > .gh .gh-note { font-weight: 500; font-size: 13px; color: var(--muted); }
+  .checks { display: grid; gap: 6px; }
+  label.chk {
+    display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start;
+    padding: 11px 14px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; cursor: pointer; transition: border-color .12s, background .12s;
+  }
+  label.chk:hover { border-color: var(--line-2); background: var(--surface-2); }
+  label.chk input { margin: 2px 0 0; width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; }
+  label.chk .body { min-width: 0; }
+  label.chk .id { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent-ink); margin-right: 9px; }
+  label.chk .desc { font-size: 14px; color: var(--ink-2); }
+  label.chk:has(input:checked) { background: var(--good-wash); border-color: color-mix(in srgb, var(--good) 40%, var(--line)); }
+  label.chk:has(input:checked) .desc { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--good) 60%, transparent); }
+
+  /* ---- Lane pills ---- */
+  .lane-pill {
+    display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono);
+    font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 7px;
+    border: 1px solid; white-space: nowrap;
+  }
+  .lane-pill .sw { width: 9px; height: 9px; border-radius: 50%; }
+  .L1 { color: var(--l1); border-color: color-mix(in srgb, var(--l1) 35%, transparent); background: color-mix(in srgb, var(--l1) 9%, var(--surface)); }
+  .L1 .sw { background: var(--l1); }
+  .L2 { color: var(--l2); border-color: color-mix(in srgb, var(--l2) 35%, transparent); background: color-mix(in srgb, var(--l2) 9%, var(--surface)); }
+  .L2 .sw { background: var(--l2); }
+  .L3 { color: var(--l3); border-color: color-mix(in srgb, var(--l3) 35%, transparent); background: color-mix(in srgb, var(--l3) 9%, var(--surface)); }
+  .L3 .sw { background: var(--l3); }
+  .L4 { color: var(--l4); border-color: color-mix(in srgb, var(--l4) 35%, transparent); background: color-mix(in srgb, var(--l4) 9%, var(--surface)); }
+  .L4 .sw { background: var(--l4); }
+  .L5 { color: var(--l5); border-color: color-mix(in srgb, var(--l5) 35%, transparent); background: color-mix(in srgb, var(--l5) 9%, var(--surface)); }
+  .L5 .sw { background: var(--l5); }
+
+  .tokgrid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tok { font-family: var(--mono); font-size: 11.5px; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); }
+  .tok.acc { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); background: var(--accent-wash); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .two, .three { grid-template-columns: 1fr; } }
+
+  .progress-bar { position: sticky; top: 0; z-index: 20; height: 3px; background: transparent; }
+  .progress-bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s ease; }
+
+  footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  .kbd { font-family: var(--mono); font-size: 12px; background: var(--surface); border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="progress-bar"><i id="progbar"></i></div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">Prolifi · QA Battle-Test · one shared merchant</p>
+    <h1>Nimbus Battle-Test Playbook<br><span class="sub">onboarding → selling → purchase, end to end</span></h1>
+    <p class="lede">Five testers, one realistic merchant, the whole lifecycle. We drive the real
+      combinatorial surface — countries × product types × feature types × pricing models ×
+      payment methods — the way merchants and customers actually hit it. Tick a scenario as you
+      clear it; your progress is saved in this browser.</p>
+    <div class="chips">
+      <span class="chip"><span class="dot"></span><span class="k">Merchant</span> <b>Nimbus Cloud Ltd</b></span>
+      <span class="chip"><span class="k">Domicile</span> <b>Nigeria · NGN</b></span>
+      <span class="chip"><span class="k">Countries</span> <b>5</b></span>
+      <span class="chip"><span class="k">Lanes</span> <b>5 testers</b></span>
+      <span class="chip"><span class="k">Env</span> <b>staging · develop.prolifi.io</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="callout">
+    <span class="ic">⛔</span>
+    <div>
+      <h3>Deploy gate — do this before any testing</h3>
+      <p>The recent fixes live on <code>develop</code> (backend) / <code>development</code> (frontend)
+      and are <b>not yet on staging</b>. Deploy them first — assign-plan license/add-on pricing,
+      cost-summary tax crash, offline product-link amount, company-customer checkout, optional
+      billing state, checkout <code>purchase_summary</code>, subscription frequency/SID,
+      transaction Invoice ID, offline collection-method dropdown, default payment term. Skip this
+      and their known issues resurface as false-positive bugs.</p>
+    </div>
+  </div>
+
+  <!-- 1 · MERCHANT -->
+  <section id="merchant">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The merchant — Nimbus</h2></div>
+    <p class="lede" style="margin-top:0">A hybrid company: cloud collaboration <b>software</b> (tiered
+      plans), professional <b>services</b> (implementation, training), and branded <b>merch</b>
+      (physical goods). One archetype that naturally exercises nearly every product type. One shared
+      account; everyone is a <span class="mono">BusinessUser</span> of it.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Country</th><th class="mono">Currency</th><th>Online PSP</th><th>Offline</th><th>Notable</th></tr></thead>
+        <tbody>
+          <tr><td>Nigeria <span class="mono" style="color:var(--muted)">· domicile</span></td><td class="mono">NGN</td><td>Paystack · Flutterwave · Nomba</td><td>Bank transfer · cash</td><td>VAT 7.5%</td></tr>
+          <tr><td>United States</td><td class="mono">USD</td><td>Stripe · PayPal</td><td>Bank transfer</td><td>no VAT</td></tr>
+          <tr><td>United Kingdom</td><td class="mono">GBP</td><td>Stripe · PayPal</td><td>Bank transfer</td><td>VAT 20%</td></tr>
+          <tr><td>Kenya</td><td class="mono">KES</td><td>Paystack · Flutterwave (M-Pesa)</td><td>Bank transfer</td><td>mobile money</td></tr>
+          <tr><td>Germany</td><td class="mono">EUR</td><td>Stripe · PayPal (SEPA)</td><td>Bank transfer</td><td>EU VAT 19%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2 · SETUP -->
+  <section id="setup">
+    <div class="sec-head"><span class="sec-num">02</span><h2>One-time shared setup</h2><p>order matters · P1 coordinates</p></div>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div><h3>Register + verify email</h3><p><code>POST /api/v1/auth/register</code> as Nimbus Cloud Ltd, country = Nigeria. Auto-creates the domicile operating entity, brand, onboarding todos, and a pending collection country. Confirm the email OTP.</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Operating-entity KYC</h3><p>Module <code>setup_operating_entity</code> → business-country registration → information → contact (each OTP-gated).</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>Brand</h3><p>Module <code>setup_brand</code>.</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>Activate Nigeria (collect payment)</h3><p>CollectionCountry wizard → attach entity → collection method → billing config → currencies → request review → activate. Then PSP config (<b>Paystack test keys</b>) → payment profile → entity-profile-mapping (activate → set-default → enable ≥1 method). Readiness = active mapping + ≥1 enabled method.</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Offline payment instruction (NG)</h3><p>Add a bank-transfer account so offline flows have something to pay to.</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Tax config (NG)</h3><p><code>tax/method = merchant</code> → add VAT 7.5%, active.</p></div></div>
+      <div class="step"><span class="n">7</span><div><h3>Activate global operations → repeat 4–6 per country</h3><p>Then US, UK, Kenya, Germany each get: activate + PSP + offline + tax. <b>Split it:</b> P2→US, P3→UK, P4→Kenya, P5→Germany — this battle-tests activate-operations + PSP + tax five times across currencies and providers.</p></div></div>
+      <div class="step"><span class="n">8</span><div><h3>Add first product → build the catalog</h3><p>Module <code>add_first_product</code> → §03.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 3 · CATALOG -->
+  <section id="catalog">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Catalog to build</h2><p>every real product / feature / pricing type</p></div>
+    <div class="grid two">
+      <div class="card">
+        <p class="meta">Plans · recurring</p>
+        <h3>Software</h3>
+        <ul>
+          <li><b>Nimbus Starter</b> — <span class="mono">standard_plan</span>, fixed recurring, Monthly + Annual, 14-day trial, included features.</li>
+          <li><b>Nimbus Pro</b> — <span class="mono">standard_plan</span> with metered features, add-ons, an intro price ramp, and a configurable entitlement.</li>
+          <li><b>Nimbus Business</b> — <span class="mono">team_plan</span> with per-seat licenses (Viewer / Editor / Admin) + add-ons.</li>
+          <li><b>Nimbus Events</b> — <span class="mono">occurrence_plan</span> (edge type).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Features · entitlements</p>
+        <h3>Hit every type dimension</h3>
+        <div class="tokgrid"><span class="tok">switch</span><span class="tok">quantity</span><span class="tok">range</span><span class="tok">dependent</span></div>
+        <div class="tokgrid" style="margin-top:8px"><span class="tok">boolean</span><span class="tok">metered_allowance</span><span class="tok">metered_consumption</span></div>
+        <div class="tokgrid" style="margin-top:8px"><span class="tok">none</span><span class="tok">fixed</span><span class="tok">pay_as_you_go</span><span class="tok">tiered</span><span class="tok acc">+ options / fee</span></div>
+        <ul><li>2FA/SSO (boolean), Storage GB (metered allowance), API calls (metered consumption), support band (range), a dependent feature, and a configurable "10/50/100 GB" with per-option fees.</li></ul>
+      </div>
+      <div class="card">
+        <p class="meta">Add-ons · 3 pricing modes</p>
+        <h3>Attach to plans</h3>
+        <ul>
+          <li><b>Priority Support</b> — <span class="mono">use_main_price</span>, mandatory / include-with-subscription.</li>
+          <li><b>Extra Storage 50GB</b> — <span class="mono">alternate_pricing_scheme</span>.</li>
+          <li><b>Onboarding Boost</b> — <span class="mono">price_ramp</span>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">One-off · item_type</p>
+        <h3>Services &amp; merch</h3>
+        <ul>
+          <li>Physical: <b>Nimbus Hoodie</b>, <b>Sticker Pack</b> <span class="mono">(product)</span>.</li>
+          <li>Services: <b>Implementation &amp; Migration</b>, <b>Training Session</b> <span class="mono">(service)</span> — put an <b>installment</b> plan on a high-value one.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Credit &amp; loyalty · edge</p>
+        <h3>Consumption + rewards</h3>
+        <ul>
+          <li><b>Nimbus Credits</b> — <span class="mono">pre_paid_credit</span> (buy + redeem).</li>
+          <li><b>Nimbus Rewards</b> — <span class="mono">reward_points</span>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Pricing models · spread across schemes</p>
+        <h3>Cover the shapes</h3>
+        <div class="tokgrid"><span class="tok">fixed</span><span class="tok">per_unit</span><span class="tok">volume</span><span class="tok">tiered</span><span class="tok">step</span><span class="tok">dynamic</span></div>
+        <ul><li>one-off vs recurring · global-single-price vs per-country · prepaid vs postpaid.</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · DATA REGISTRY -->
+  <section id="registry">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Data registry</h2><p>canonical values · use these verbatim</p></div>
+    <p class="lede" style="margin-top:0">One source of truth for every value you type into a form. Using the same names,
+      prices, and addresses everywhere keeps results comparable and makes reflection cross-checks line up. All
+      emails/phones are test-only. Money is per currency; annual = 10× monthly (two months free).</p>
+
+    <h3 style="margin:26px 0 10px;font-size:16px">Shared credentials &amp; keys</h3>
+    <div class="grid three">
+      <div class="card">
+        <p class="meta">Merchant login</p>
+        <ul>
+          <li>Register once: <span class="mono">nimbus.qa@example.com</span></li>
+          <li>Password: pick a strong shared one (min 8, upper+lower+digit+symbol), store in the tracker.</li>
+          <li>Add each tester as a <span class="mono">BusinessUser</span> if RBAC seats are set up.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">PSP · test mode only</p>
+        <ul>
+          <li>Paystack: your workspace <b>test</b> public + secret keys (NG/KE/GH/ZA).</li>
+          <li>Stripe: your <b>test</b> keys (US/UK/DE).</li>
+          <li>Paste the same test keys into both test <em>and</em> live credential tabs so routing stays sandbox.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Test cards</p>
+        <ul>
+          <li>Paystack <span class="mono">4084 0840 8408 4081</span> · 12/30 · 408</li>
+          <li>Stripe <span class="mono">4242 4242 4242 4242</span> · any future exp/CVC</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Operating entities <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— one per country; Nigeria is created at registration</span></h3>
+    <div class="table-scroll">
+      <table style="min-width:820px">
+        <thead><tr><th>Country</th><th>Legal name</th><th>Trading</th><th class="mono">Reg no.</th><th class="mono">Tax ID</th><th>Business email</th><th>Registered address</th></tr></thead>
+        <tbody>
+          <tr><td>Nigeria <span class="mono" style="color:var(--muted)">· domicile</span></td><td>Nimbus Cloud Limited</td><td>Nimbus</td><td class="mono">RC-7788123</td><td class="mono">20241234-0001</td><td class="mono">ops.ng@nimbus.example</td><td>12 Adeola Odeku St, Victoria Island, Lagos, 101241</td></tr>
+          <tr><td>United States</td><td>Nimbus Cloud Inc</td><td>Nimbus</td><td class="mono">—</td><td class="mono">EIN 47-1234567</td><td class="mono">ops.us@nimbus.example</td><td>500 Market St, Suite 400, San Francisco, CA 94105</td></tr>
+          <tr><td>United Kingdom</td><td>Nimbus Cloud Ltd</td><td>Nimbus</td><td class="mono">12345678</td><td class="mono">VAT GB123456789</td><td class="mono">ops.uk@nimbus.example</td><td>1 Deansgate, Manchester, M3 1SB</td></tr>
+          <tr><td>Kenya</td><td>Nimbus Cloud Kenya Ltd</td><td>Nimbus</td><td class="mono">CPR/2021/12345</td><td class="mono">KRA P051234567X</td><td class="mono">ops.ke@nimbus.example</td><td>Westlands Rd, ABC Place, Nairobi, 00600</td></tr>
+          <tr><td>Germany</td><td>Nimbus Cloud GmbH</td><td>Nimbus</td><td class="mono">HRB 234567</td><td class="mono">VAT DE123456789</td><td class="mono">ops.de@nimbus.example</td><td>Maximilianstraße 35, München, 80539</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Offline bank accounts &amp; tax</h3>
+    <div class="table-scroll">
+      <table style="min-width:720px">
+        <thead><tr><th>Country</th><th>Account name</th><th>Bank</th><th class="mono">Account / IBAN</th><th class="mono">Currency</th><th class="mono">VAT</th></tr></thead>
+        <tbody>
+          <tr><td>Nigeria</td><td>Nimbus Cloud Limited</td><td>GTBank</td><td class="mono">0123456789</td><td class="mono">NGN</td><td class="mono">7.5%</td></tr>
+          <tr><td>United States</td><td>Nimbus Cloud Inc</td><td>Chase</td><td class="mono">rtg 021000021 · 123456789</td><td class="mono">USD</td><td class="mono">none</td></tr>
+          <tr><td>United Kingdom</td><td>Nimbus Cloud Ltd</td><td>Barclays</td><td class="mono">20-00-00 · 12345678</td><td class="mono">GBP</td><td class="mono">20%</td></tr>
+          <tr><td>Kenya</td><td>Nimbus Cloud Kenya Ltd</td><td>Equity Bank</td><td class="mono">1234567890</td><td class="mono">KES</td><td class="mono">16%</td></tr>
+          <tr><td>Germany</td><td>Nimbus Cloud GmbH</td><td>Deutsche Bank</td><td class="mono">DE89 3704 0044 0532 0130 00</td><td class="mono">EUR</td><td class="mono">19%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Customers <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— create 10 · 1 individual + 1 company per country</span></h3>
+    <p class="lede" style="margin-top:0">Each customer is a <b>persona</b> that exercises a specific path and builds up a real
+      history (a sale/subscription + its invoices + transactions), so reflection (group D) is checked against
+      populated records — not empty ones. Spin up extras ad-hoc, but these 10 cover the matrix. Prefix ad-hoc
+      ones with the workstream (e.g. <span class="mono">L4-*</span>).</p>
+    <div class="table-scroll">
+      <table style="min-width:1000px">
+        <thead><tr><th>#</th><th>Name / Company</th><th class="mono">Type</th><th>Email · phone</th><th class="mono">Country·Cur</th><th class="mono">Tax / VAT ID</th><th>Billing address</th><th>Simulates</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">1</td><td>Chidi Okafor</td><td class="mono">individual</td><td class="mono">chidi.okafor+nimbus@example.com · +234 802 555 0142</td><td class="mono">NG · NGN</td><td class="mono">—</td><td>14 Awolowo Rd, Ikoyi, Lagos, 101233</td><td>Starter plan · card (Paystack) · 14-day trial → convert</td></tr>
+          <tr><td class="mono">2</td><td>Sarah Bennett</td><td class="mono">individual</td><td class="mono">sarah.bennett+nimbus@example.com · +1 415 555 0177</td><td class="mono">US · USD</td><td class="mono">—</td><td>500 Market St, San Francisco, CA 94105</td><td>One-off merch (Hoodie) · card (Stripe) · Pro monthly</td></tr>
+          <tr><td class="mono">3</td><td>James Whitmore</td><td class="mono">individual</td><td class="mono">james.whitmore+nimbus@example.com · +44 20 7946 0123</td><td class="mono">UK · GBP</td><td class="mono">—</td><td>22 Baker St, London, W1U 3BW</td><td>Annual billing + coupon · subscription link (B4)</td></tr>
+          <tr><td class="mono">4</td><td>Amina Wanjiru</td><td class="mono">individual</td><td class="mono">amina.wanjiru+nimbus@example.com · +254 712 555 088</td><td class="mono">KE · KES</td><td class="mono">—</td><td>8 Kenyatta Ave, Nairobi, 00100</td><td>Mobile money (Flutterwave/M-Pesa) · pre-paid credit buy + redeem</td></tr>
+          <tr><td class="mono">5</td><td>Lukas Vogel</td><td class="mono">individual</td><td class="mono">lukas.vogel+nimbus@example.com · +49 30 5557 0190</td><td class="mono">DE · EUR</td><td class="mono">—</td><td>Torstraße 12, Berlin, 10119</td><td>Trial → convert · price ramp · VAT 19% exclusive</td></tr>
+          <tr><td class="mono">6</td><td>Zenith Logistics Ltd</td><td class="mono">company</td><td class="mono">billing@zenithlogistics.example · +234 803 555 0210</td><td class="mono">NG · NGN</td><td class="mono">TIN 12345678-0001</td><td>3 Marina Rd, Lagos Island, Lagos, 101001</td><td>Team plan + seat licenses · offline bank transfer · net-30 · partial-then-full confirm</td></tr>
+          <tr><td class="mono">7</td><td>Brightpath Inc</td><td class="mono">company</td><td class="mono">ap@brightpath.example · +1 212 555 0198</td><td class="mono">US · USD</td><td class="mono">EIN 47-7654321</td><td>350 5th Ave, New York, NY 10118</td><td>Subscription + add-ons · installment on Implementation · invoice-link pay (B4)</td></tr>
+          <tr><td class="mono">8</td><td>Harbour &amp; Co Ltd</td><td class="mono">company</td><td class="mono">accounts@harbourco.example · +44 161 555 0155</td><td class="mono">UK · GBP</td><td class="mono">VAT GB987654321</td><td>1 Deansgate, Manchester, M3 1SB</td><td>Company checkout w/ VAT id · VAT 20% · multi-product basket (A6/B4)</td></tr>
+          <tr><td class="mono">9</td><td>Savanna Retail Ltd</td><td class="mono">company</td><td class="mono">finance@savannaretail.example · +254 733 555 021</td><td class="mono">KE · KES</td><td class="mono">KRA P051234999Z</td><td>Westlands Rd, Nairobi, 00600</td><td>Reward points · occurrence plan · manual discount</td></tr>
+          <tr><td class="mono">10</td><td>Nordwind GmbH</td><td class="mono">company</td><td class="mono">rechnung@nordwind.example · +49 89 5557 0233</td><td class="mono">DE · EUR</td><td class="mono">VAT DE987654321</td><td>Maximilianstraße 35, München, 80539</td><td>EU VAT B2B · assign-plan send-link → company pays · add-to-next-bill</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Products &amp; plans <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— full build data</span></h3>
+    <p class="lede" style="margin-top:0">Two independent axes on every product: <b><span class="mono">product_type</span></b> = the commercial /
+      billing model (<span class="mono">standard_plan</span> / <span class="mono">team_plan</span> / <span class="mono">occurrence_plan</span> = recurring
+      subscription · <span class="mono">physical_product</span> = one-off good · <span class="mono">pre_paid_credit</span> · <span class="mono">reward_points</span>),
+      and <b><span class="mono">item_type</span></b> = what's delivered (<span class="mono">product</span> = tangible vs <span class="mono">service</span> =
+      intangible). So <b>Nimbus Starter = standard_plan + service</b> = a recurring subscription whose deliverable is
+      software (a service). A monthly snack box would be standard_plan + product; a hoodie is physical_product + product.</p>
+    <div class="grid two">
+      <div class="card">
+        <p class="meta">standard_plan · service · recurring</p>
+        <h3>Nimbus Starter</h3>
+        <ul>
+          <li><b>Type</b> <span class="mono">standard_plan</span> · <b>item_type</b> <span class="mono">service</span></li>
+          <li><b>Pricing scheme</b> "Main" · per-country · billing_type <span class="mono">recurring</span> · prepaid</li>
+          <li><b>Cycles / price</b> Monthly &amp; Annual — NGN 15,000 · USD 12 · GBP 10 · KES 1,500 · EUR 11 (annual ×10)</li>
+          <li><b>Trial</b> 14 days · after_trial · requires payment method</li>
+          <li><b>Features</b> 2FA, Storage 10GB, Email Notifications 100 (all included)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">team_plan · service · recurring</p>
+        <h3>Nimbus Business</h3>
+        <ul>
+          <li><b>Type</b> <span class="mono">team_plan</span> · <b>item_type</b> <span class="mono">service</span></li>
+          <li><b>Base</b> NGN 40,000 / USD 40 per month</li>
+          <li><b>Licenses (per-seat)</b> Viewer (1 free, min 1) · Editor NGN 5,000/seat · Admin NGN 8,000/seat</li>
+          <li><b>Add-ons</b> Priority Support, Extra Storage 50GB</li>
+          <li><b>Features</b> SSO (fixed add), Storage (configurable), API Calls (metered)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">physical_product · product · one-off</p>
+        <h3>Nimbus Hoodie</h3>
+        <ul>
+          <li><b>Type</b> <span class="mono">physical_product</span> · <b>item_type</b> <span class="mono">product</span></li>
+          <li><b>Billing</b> one_off · prepaid</li>
+          <li><b>Price</b> NGN 12,000 · USD 25 · GBP 20 · KES 3,000 · EUR 23</li>
+          <li><b>Pricing model</b> <span class="mono">volume</span> (10% off ≥ 5 units) — to exercise tiered/volume</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">the rest — build to the same shape</p>
+        <h3>Remaining SKUs</h3>
+        <div class="table-scroll" style="box-shadow:none;border:none">
+          <table style="min-width:0">
+            <tbody>
+              <tr><td><b>Nimbus Pro</b></td><td class="mono">standard_plan</td><td>metered + add-ons + ramp + configurable</td></tr>
+              <tr><td><b>Nimbus Events</b></td><td class="mono">occurrence_plan</td><td>occurrence-based (edge)</td></tr>
+              <tr><td><b>Implementation</b></td><td class="mono">service</td><td>one-off · installment plan</td></tr>
+              <tr><td><b>Training Session</b></td><td class="mono">service</td><td>one-off</td></tr>
+              <tr><td><b>Sticker Pack</b></td><td class="mono">product</td><td>one-off · low price</td></tr>
+              <tr><td><b>Nimbus Credits</b></td><td class="mono">pre_paid_credit</td><td>buy + redeem</td></tr>
+              <tr><td><b>Nimbus Rewards</b></td><td class="mono">reward_points</td><td>earn + redeem</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Plans matrix <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— each a distinct config; build them all</span></h3>
+    <div class="table-scroll">
+      <table style="min-width:1120px">
+        <thead><tr><th>Plan</th><th class="mono">type</th><th class="mono">billing</th><th>Term</th><th class="mono">Countries</th><th class="mono">Pricing model</th><th class="mono">Scope</th><th>Extras to configure</th></tr></thead>
+        <tbody>
+          <tr><td>Nimbus Starter</td><td class="mono">standard_plan</td><td>Monthly + Annual</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">per-country</td><td>14-day trial · basic T&amp;C</td></tr>
+          <tr><td>Nimbus Pro</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">NG·US·UK</td><td class="mono">fixed</td><td class="mono">per-country</td><td>ramp 20%×3 · add-ons (incl. <b>alternate_pricing</b>) · cancellation cutoff</td></tr>
+          <tr><td>Nimbus Business</td><td class="mono">team_plan</td><td>Monthly + Annual</td><td>open</td><td class="mono">US·UK·DE</td><td class="mono">tiered</td><td class="mono">per-country</td><td>seat licenses · transfer + deposit fees</td></tr>
+          <tr><td>Nimbus Enterprise</td><td class="mono">team_plan</td><td>Annual</td><td><b>time-bound</b> · 12-mo commitment</td><td class="mono">US·UK·DE</td><td class="mono">tiered</td><td class="mono">per-country</td><td>min-term · renewal notice · termination period</td></tr>
+          <tr><td>Nimbus Events</td><td class="mono">occurrence_plan</td><td>per-occurrence</td><td><b>event-based</b></td><td class="mono">NG·KE</td><td class="mono">fixed</td><td class="mono">global</td><td>occurrence types + tickets + booking rules · <b>global price in NGN</b> (NG native; KE customers see the NGN price / conversion)</td></tr>
+          <tr><td>Nimbus Metered</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">US·DE</td><td class="mono">per_unit</td><td class="mono">global</td><td>API/SMS metered + overage · <b>global per-unit rate in USD</b> (DE customers billed off the USD rate)</td></tr>
+          <tr><td>Nimbus Global Lite</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">global</td><td>7-day trial · <b>single global price in USD</b> — sold across all 5 currencies → verify non-USD countries convert or are charged in USD</td></tr>
+          <tr><td>Nimbus Hybrid</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">global + overrides</td><td><b>USD global default</b> with per-country overrides for NG (₦) &amp; UK (£); the other 3 fall back to the USD global</td></tr>
+          <tr><td>Lagos Local</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">NG only</td><td class="mono">fixed</td><td class="mono">per-country</td><td>offline bank transfer focus · NG VAT</td></tr>
+          <tr><td>Seasonal Campaign</td><td class="mono">standard_plan</td><td>Monthly</td><td><b>time-bound</b> · fixed 3-mo end</td><td class="mono">UK·DE</td><td class="mono">fixed</td><td class="mono">per-country</td><td>auto-expires (no renewal)</td></tr>
+          <tr><td>Nimbus Events+</td><td class="mono">standard_plan + occurrence_addon</td><td>Monthly</td><td>open</td><td class="mono">NG·KE</td><td class="mono">fixed</td><td class="mono">per-country</td><td>occurrence_addon attached to a host plan</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:10px"><b>Countries</b> = where the plan is <b>available</b> to sell/assign (its sell-to set) —
+      <span class="mono">all 5</span> = NG·US·UK·KE·DE. <b>Scope</b> = how price is set across those countries
+      (<span class="mono">global_pricing_enabled</span>): <b>per-country</b> = a distinct price + currency per country
+      (₦/$/£/KSh/€ rows); <b>global</b> = one single price row (<span class="mono">country_id = null</span>) reused everywhere;
+      <b>global + overrides</b> = a global default plus a few per-country rows — resolution is exact-country → global
+      fallback (the <span class="mono">pickBaseRow</span> chain), so the flag is binary but a hybrid works at the data level.
+      <b>Term</b>: open = renews indefinitely · time-bound = fixed <span class="mono">end_date</span> or initial commitment →
+      auto-expires at the renewal run. Every plan must be <b>published</b> (group E) before it can be sold.</p>
+
+    <div class="grid two" style="margin-top:16px">
+      <div class="card">
+        <p class="meta">Contract terms · attach to Pro / Business / Enterprise</p>
+        <ul>
+          <li><b>T&amp;C</b> one of: inline text · external URL · <span class="mono">terms_and_conditions_id</span> (from UMS library)</li>
+          <li><b>Fees</b> (each global or per-country override, unique per country): transfer, deposit, late, cancellation, plan-switch, no-show, re-activation — e.g. transfer 2.5% / deposit NGN 5,000</li>
+          <li><b>Periods</b> cutoff · renewal notice · cancellation cutoff before renewal · termination period · refund window</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Inventory &amp; sell-to constraints</p>
+        <ul>
+          <li><b>Inventory</b> set stock on physical products/services (Hoodie, Sticker, Training seats) — verify it <b>depletes on sale</b> and <b>blocks at zero</b>.</li>
+          <li><b>Sell-to (country)</b> the plan's Countries column above is the availability set — a customer in an unlisted country can't buy it (hidden / 422).</li>
+          <li><b>Sell-to (entity)</b> restrict a product to specific operating entities — only those entities can sell it.</li>
+          <li><b>Add-on compatibility</b> Priority Support &amp; Extra Storage → Starter/Pro/Business; Onboarding Boost → Business/Enterprise only. Only compatible add-ons should be offered per plan.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Features / entitlements <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— define once · map per plan · extend at runtime</span></h3>
+    <p class="lede" style="margin-top:0">A feature moves through three phases — keep them distinct when testing:
+      <b>1 · Creation</b> (define the entitlement and its mode), <b>2 · Mapping</b> (attach it to each plan with that
+      plan's included amount + country/period scope), <b>3 · Extension</b> (runtime — exhaustion &amp; top-ups).</p>
+
+    <p style="font-weight:700;margin:22px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">1 ·</span> Creation — define the feature</p>
+    <p class="lede" style="margin-top:0">A feature's <b>mode</b> = <span class="mono">entitlement_type</span> × <span class="mono">feature_type</span> ×
+      <span class="mono">pricing_model</span> — build the full list below so plans can mix modes. Options
+      (<span class="mono">entitlement_options</span>, each with an <span class="mono">additional_fee</span>) make a feature configurable;
+      <span class="mono">depends_on</span> gates one feature on another; <b>time-based</b> features scope access/pricing to a window
+      (<span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>) or an occurrence anchor.</p>
+    <p class="lede" style="margin-top:0"><b>pricing_model</b> = how <em>this feature</em> is charged for extra capacity/enabling,
+      <em>separate from the plan fee</em>: <span class="mono">none</span> = included in the plan, no charge of its own
+      (get more via a configurable option, add-on, or higher plan — e.g. Storage's 10 GB is bundled; extra GB comes from the
+      10/50/100 option fee or the Extra-Storage add-on); <span class="mono">fixed</span> = a flat fee to enable it (SSO +₦2,000);
+      <span class="mono">pay_as_you_go</span> = per-unit over the allowance (API Calls +₦5/call); <span class="mono">tiered</span> = banded.
+      <b>reset</b> = when a metered counter refreshes each cycle (allowance ceiling re-set; consumption count zeroed) — boolean
+      on/off features never reset (<span class="mono">—</span>).</p>
+    <div class="table-scroll">
+      <table style="min-width:900px">
+        <thead><tr><th>Feature</th><th class="mono">entitlement_type</th><th class="mono">feature_type</th><th class="mono">pricing_model</th><th class="mono">reset</th><th>Behaviour to verify</th></tr></thead>
+        <tbody>
+          <tr><td>2FA</td><td class="mono">switch</td><td class="mono">boolean</td><td class="mono">none</td><td class="mono">—</td><td>included on/off · <b>not extendable</b></td></tr>
+          <tr><td>SSO (SAML/OIDC)</td><td class="mono">switch</td><td class="mono">boolean</td><td class="mono">fixed</td><td class="mono">—</td><td>+NGN 2,000/mo toggle · not included by default</td></tr>
+          <tr><td>Storage</td><td class="mono">quantity</td><td class="mono">metered_allowance</td><td class="mono">none</td><td class="mono">monthly</td><td>10GB incl · options 10/50/100 (+fee) · extend via buy-extra (fixed)</td></tr>
+          <tr><td>Projects</td><td class="mono">quantity</td><td class="mono">metered_allowance</td><td class="mono">fixed</td><td class="mono">monthly</td><td>5 incl · +NGN 1,000 each additional</td></tr>
+          <tr><td>Bandwidth</td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">monthly</td><td>banded tiers · extend = tier upgrade (extend-feature)</td></tr>
+          <tr><td>Support Hours</td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">monthly</td><td>Basic / Priority / Dedicated band</td></tr>
+          <tr><td>Advanced Analytics</td><td class="mono">dependent</td><td class="mono">boolean</td><td class="mono">fixed</td><td class="mono">—</td><td>requires Pro tier (depends_on) · +NGN 3,000/mo</td></tr>
+          <tr><td>Webhooks</td><td class="mono">dependent</td><td class="mono">metered_allowance</td><td class="mono">fixed</td><td class="mono">monthly</td><td>depends on API Calls · quota only when parent enabled</td></tr>
+          <tr><td>API Calls</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">pay_as_you_go</td><td class="mono">monthly</td><td>1,000 incl · <b>overage</b> NGN 5/call → UnbilledCharge on renewal</td></tr>
+          <tr><td>SMS Credits</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">tiered</td><td class="mono">monthly</td><td>tiered overage pricing</td></tr>
+          <tr><td>Email Sends</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">none</td><td class="mono">monthly</td><td>max cap · <b>no overage → hard block</b> at the limit</td></tr>
+          <tr><td>Peak-Hours Access <span class="mono" style="color:var(--muted)">(time-based)</span></td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">per window</td><td><b>time-boxed</b> access + peak/off-peak rate via <span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>; can be occurrence/booking-anchored</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;margin:26px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">2 ·</span> Mapping — attach features to plans</p>
+    <p class="lede" style="margin-top:0">A feature is created once, then <b>mapped onto each plan</b> with that plan's own <b>included amount</b>,
+      enabled/disabled (<span class="mono">is_enabled</span>), and scoped <b>per country and/or per billing period</b>
+      (<span class="mono">plan_feature_country_entitlements</span> / <span class="mono">…_country_period</span> / <span class="mono">…_global_period</span>;
+      <span class="mono">global_entitlement_enabled</span>, <span class="mono">set_by_recurring_period</span>). The same feature is included
+      differently per plan — build this matrix so mapping is exercised, not just creation. (<span class="mono">—</span> = not on that plan.)</p>
+    <div class="table-scroll">
+      <table style="min-width:760px">
+        <thead><tr><th>Feature</th><th>Starter</th><th>Pro</th><th>Business</th><th>Enterprise</th></tr></thead>
+        <tbody>
+          <tr><td>2FA</td><td>on</td><td>on</td><td>on</td><td>on</td></tr>
+          <tr><td>SSO</td><td class="mono">—</td><td>+fee</td><td>on</td><td>on</td></tr>
+          <tr><td>Storage</td><td>10 GB</td><td>10/50/100 (option)</td><td>100 GB</td><td>500 GB</td></tr>
+          <tr><td>Projects</td><td>5</td><td>20</td><td>100</td><td>unlimited</td></tr>
+          <tr><td>Bandwidth</td><td class="mono">—</td><td class="mono">—</td><td>tier 2</td><td>tier 3</td></tr>
+          <tr><td>Support Hours</td><td class="mono">—</td><td class="mono">—</td><td>Priority</td><td>Dedicated</td></tr>
+          <tr><td>Advanced Analytics</td><td class="mono">—</td><td>+fee</td><td>on</td><td>on</td></tr>
+          <tr><td>Webhooks</td><td class="mono">—</td><td class="mono">—</td><td>on</td><td>on</td></tr>
+          <tr><td>API Calls</td><td class="mono">—</td><td>1,000</td><td>10,000</td><td>100,000</td></tr>
+          <tr><td>SMS Credits</td><td class="mono">—</td><td class="mono">—</td><td>5,000</td><td>20,000</td></tr>
+          <tr><td>Email Sends</td><td>100</td><td>1,000</td><td>10,000</td><td>50,000</td></tr>
+          <tr><td>Peak-Hours Access</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td>on</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-weight:700;margin:26px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">3 ·</span> Extension — top up / change at runtime</p>
+    <p class="lede" style="margin-top:0"><b>Exhaustion</b>: a <span class="mono">metered_consumption</span> feature with overage pricing accrues an
+      <span class="mono">UnbilledCharge</span> past its allowance (folded into the next renewal invoice); one with a max cap and
+      no overage is a <b>hard block</b>. Allowances <b>reset</b> each <span class="mono">renewal_cycle</span>.
+      <b>buy-extra-feature</b> adds a new feature/quantity mid-cycle (PAYG or fixed); <b>extend-feature</b> upgrades an
+      existing tier (boolean/tier-less rejected); <b>dependent</b> features unlock only when their parent is enabled.
+      These runtime paths are exercised by scenarios <span class="mono">F2–F8</span>.</p>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Add-ons &amp; discounts</h3>
+    <div class="grid two">
+      <div class="card">
+        <p class="meta">Add-ons · pricing_mode</p>
+        <div class="table-scroll" style="box-shadow:none;border:none">
+          <table style="min-width:0">
+            <tbody>
+              <tr><td><b>Priority Support</b></td><td class="mono">use_main_price</td><td>NGN 5,000/mo · include_with_subscription</td></tr>
+              <tr><td><b>Extra Storage 50GB</b></td><td class="mono">alternate_pricing_scheme</td><td>NGN 2,500/mo</td></tr>
+              <tr><td><b>Onboarding Boost</b></td><td class="mono">price_ramp</td><td>NGN 10,000 one-off</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <p class="meta">Coupons &amp; manual discounts</p>
+        <div class="table-scroll" style="box-shadow:none;border:none">
+          <table style="min-width:0">
+            <tbody>
+              <tr><td class="mono">WELCOME10</td><td>coupon · 10% off</td></tr>
+              <tr><td class="mono">SAVE5K</td><td>coupon · NGN 5,000 off</td></tr>
+              <tr><td>Manual %</td><td>15% off (offer settings)</td></tr>
+              <tr><td>Manual fixed</td><td>NGN 2,000 off</td></tr>
+              <tr><td>Price ramp</td><td>20% off first 3 periods</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · SCENARIOS -->
+  <section id="scenarios">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Scenario matrix</h2><p>tick as you clear · layer modifiers where noted</p></div>
+    <p class="lede" style="margin-top:0">Layer these modifiers onto rows where relevant:
+      <span class="tok">trial</span> <span class="tok">price ramp</span> <span class="tok">coupon</span>
+      <span class="tok">manual discount</span> <span class="tok">installment</span>
+      <span class="tok">tiered / metered</span> <span class="tok">individual vs company</span>
+      <span class="tok">online vs offline</span></p>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">A</span> Merchant-initiated selling</div>
+      <div class="checks" data-group="A">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A1</span> <span class="desc"><b>Assign-plan → sale inline activate</b>, all 6 options: <span class="mono">pay_later · apply_credits · record_offline_payment · send_payment_link · charge_payment_method · add_to_next_bill</span></span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A2</span> <span class="desc"><b>Assign-plan → held pre-order</b>: <span class="mono">create_only</span> and <span class="mono">send_payment_link</span> (emailed)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A3</span> <span class="desc"><b>Pre-order activate</b>, all 7 options — adds <span class="mono">offer_for_free</span> (current-period-only / N-periods / while-subscription-lasts)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A4</span> <span class="desc"><b>One-off Order</b> (physical + service): create → fulfill / cancel</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A5</span> <span class="desc"><b>Subscription action-links</b>: switch-plan · buy-addon · buy-extra-feature · buy-license · extend-feature — each via <b>activate</b> and <b>payment-link</b>; only <b>compatible</b> add-ons/target plans offered</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A6</span> <span class="desc"><b>Basket / booking</b> — multi-commitment under one booking code</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">A7</span> <span class="desc"><b>Plan switch — upgrade &amp; downgrade</b>: switch to a higher plan (upgrade → proration/credit applied now) and to a lower one (downgrade → scheduled at period end); confirm the switch cost summary and the resulting subscription/invoice</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">B</span> Customer self-service purchase</div>
+      <div class="checks" data-group="B">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">B1</span> <span class="desc"><b>Product purchase link → hosted checkout</b>: configure plan + features + options + add-ons + seat licenses; verify the checkout shows the priced <span class="mono">purchase_summary</span>, not just base price</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">B2</span> <span class="desc"><b>Individual vs Company</b> customer setup (company = no first/last name → stored as <span class="mono">business</span>)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">B3</span> <span class="desc"><b>Online card</b> (Paystack NG / Stripe US·UK·DE) and <b>offline bank transfer</b> on the same link</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">B4</span> <span class="desc"><b>Pre-built checkout links</b> paid through the shared <span class="mono">/checkout/{token}</span>: a <b>sale</b> link (from assign-plan send-link), an <b>invoice</b> link (pay one bill), a <b>multi-product</b> link (basket of items), a <b>subscription</b> link (existing sub) — each renders differently, all reconcile</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">B5</span> <span class="desc"><b>Geolocated product link</b>: open a country-less product link — it resolves country by <b>IP</b> or explicit <span class="mono">?country_id</span>; an available country shows the configurator with that country's price/currency, an unavailable one shows "not available in your location". Test both an in-list and out-of-list country</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">C</span> Payment paths</div>
+      <div class="checks" data-group="C">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">C1</span> <span class="desc"><b>Online orchestrator → PSP</b> for each <span class="mono">flow_type</span> (redirect / psp_hosted / client_side); success + failure callback reconciliation</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">C2</span> <span class="desc"><b>Offline</b>: submit proof → merchant confirm (full), partial confirm (posted→partial→paid), void; over-amount rejected (422)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">C3</span> <span class="desc"><b>Tax</b> on invoice/summary per country (NG 7.5% · UK 20% · DE 19%), exclusive vs inclusive; tax-exempt product/customer → 0</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">D</span> Reflection <span class="gh-note">— the cross-check that runs for every A / B / E / F scenario (L5 / QA owns)</span></div>
+      <div class="checks" data-group="D">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D1</span> <span class="desc"><b>Sales list</b> — product, type, frequency, SID/QID all populated</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D2</span> <span class="desc"><b>Billing history</b> — invoices carry the subscription SID; transactions carry the Invoice ID</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D3</span> <span class="desc"><b>Subscription billing</b> reflects the sub + first invoice; amounts, currency, tax correct</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D4</span> <span class="desc"><b>Pre-order drop-off</b> — a paid pre-order leaves the list and becomes a Sale</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D5</span> <span class="desc"><b>Discounts / trial / ramps / installments</b> reflected in the charged amount and schedule</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D6</span> <span class="desc"><b>Product overview page</b> — a sold product's overview reflects its revenue, recent transactions and subscriber/order count</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D7</span> <span class="desc"><b>Operating-entity detail</b> — clicking an operating entity opens its details and its entity-scoped sales / pre-orders / invoices / transactions</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D8</span> <span class="desc"><b>Every cost summary is accurate</b> — assign-plan, checkout, product-link, switch / buy-extra / extend / buy-license, and pre-order summaries each equal what's charged (base + licenses + add-ons + entitlements + tax − discounts, trial/ramp applied)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D9</span> <span class="desc"><b>Entity-scoped lists</b> — <span class="mono">/merchant/operating-entities/{id}/…</span> sales/pre-orders/invoices/transactions show only that entity's records</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D10</span> <span class="desc"><b>Sell-to &amp; inventory enforced</b> — a product not available in a country/entity is hidden or blocked (not sellable there); stock at zero blocks purchase</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">D11</span> <span class="desc"><b>Main merchant dashboard reflects sales</b> — after a sale/subscription, the merchant home/overview aggregates it (gross revenue, sales count, recent activity), not just the customer record</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">E</span> Plan lifecycle &amp; config</div>
+      <div class="checks" data-group="E">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E1</span> <span class="desc"><b>Publish → grandfather</b>: publish v1 → subscribe → <span class="mono">duplicate-for-edit</span> → change price → <span class="mono">publish</span> with <span class="mono">grandfather_subscriptions=true</span>. Existing sub keeps v1 (old version <span class="mono">grandfathered</span>); a new sub gets v2</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E2</span> <span class="desc"><b>Publish → migrate all</b>: same edit with <span class="mono">grandfather_subscriptions=false</span> → every sub migrated (<span class="mono">migrated_at</span> set, old version <span class="mono">deprecated</span>); also test a <b>migration grace period</b> (deadline + immediately/end-of-cycle)</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E3</span> <span class="desc"><b>Feature/credit cascade</b>: publish a feature change with <span class="mono">apply_changes_to</span> = product_only vs products_and_plans vs products_plans_and_subscriptions</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E4</span> <span class="desc"><b>Time-bound auto-expire</b>: Enterprise (12-mo commitment) and Seasonal (fixed end) reach term → renewal run <b>expires</b> them (no renew); an open-ended plan renews</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E5</span> <span class="desc"><b>Event-based</b>: build an <span class="mono">occurrence_plan</span> (occurrence types + tickets + booking rules) and an <span class="mono">occurrence_addon</span> on a host plan; sell + attend</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E6</span> <span class="desc"><b>Alternate pricing</b>: an add-on with <span class="mono">pricing_mode=alternate_pricing</span> bills off its alternate scheme, not the plan's main price; verify global vs per-country override resolution</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E7</span> <span class="desc"><b>Contract terms</b>: attach T&amp;C (inline / URL / <span class="mono">terms_and_conditions_id</span>); a global transfer/deposit fee + a per-country override (unique per country); cutoff / renewal-notice / cancellation-cutoff / refund window applied</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E8</span> <span class="desc"><b>Inventory</b>: stock depletes on each sale, blocks at zero, restock re-enables selling</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E9</span> <span class="desc"><b>Sell-to constraints</b>: per-country and per-entity availability enforced at both assign-plan and public checkout</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">E10</span> <span class="desc"><b>Pricing-scope resolution</b>: a <b>global</b> plan charges its single price/currency in every country; a <b>per-country</b> plan charges each country's own price; a <b>global + overrides</b> plan (Nimbus Hybrid) uses NG (₦) &amp; UK (£) overrides and falls back to the USD global for US/KE/DE — confirm the charged amount + currency at checkout for each</span></div></label>
+      </div>
+    </div>
+
+    <div class="scen-group">
+      <div class="gh"><span class="tag">F</span> Entitlement modes &amp; lifecycle</div>
+      <div class="checks" data-group="F">
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F1</span> <span class="desc"><b>All modes</b>: build the full feature list (registry) so every <span class="mono">entitlement_type × feature_type × pricing_model</span> combination renders and prices on a plan</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F2</span> <span class="desc"><b>Exhaustion → overage</b>: consume a <span class="mono">metered_consumption</span> feature past its allowance → overage accrues an <span class="mono">UnbilledCharge</span> → folded into the next renewal invoice</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F3</span> <span class="desc"><b>Exhaustion → hard block</b>: a metered feature with a max cap and no overage is blocked at the limit</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F4</span> <span class="desc"><b>Allowance reset</b>: a <span class="mono">metered_allowance</span> resets each <span class="mono">renewal_cycle</span></span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F5</span> <span class="desc"><b>Extend: buy-extra-feature</b> — add a feature/quantity mid-cycle (PAYG vs fixed shape; quantity validated) → resolve → cost-summary → checkout → AddFeatureOffer</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F6</span> <span class="desc"><b>Extend: extend-feature</b> — upgrade an existing feature's tier (proration, no old-plan credit; boolean/tier-less rejected) → ExtendOffer</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F7</span> <span class="desc"><b>Dependent entitlement</b> — a feature gated on another (<span class="mono">depends_on</span>) is only available when its parent is enabled</span></div></label>
+        <label class="chk"><input type="checkbox"><div class="body"><span class="id">F8</span> <span class="desc"><b>Time-based feature</b> — an entitlement scoped to a window (<span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>) or occurrence/booking anchor: access and price honour the window (e.g. peak vs off-peak) — verify the correct rate/access inside vs outside it</span></div></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · WORKSTREAMS -->
+  <section id="lanes">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Five workstreams</h2><p>combined effort · coordinators, not silos</p></div>
+    <p class="lede" style="margin-top:0">Five focus areas, one team. Everyone contributes to <b>completing every workstream</b> — the
+      named <b>coordinator</b> drives it, keeps the tracker current, and signs it off, but pair up and
+      rotate through the long tails (all 6 sale-activation options, all 7 pre-order options, 5-country
+      activation). Primary countries below are starting points, not fences. A workstream is <b>done</b>
+      only once QA (L5) has cross-checked its reflection (group D).</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Workstream</th><th>Focus</th><th class="mono">Primary countries</th><th>Builds</th><th class="mono">Runs</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="lane-pill L1"><span class="sw"></span>L1 · P1</span><div class="mono" style="font-size:11px;color:var(--muted);margin-top:6px">lead</div></td>
+            <td>Onboarding, activate all countries, global operations, tax &amp; payment-readiness edge cases</td>
+            <td class="mono">all · NG + global</td>
+            <td>Merchant + NG setup</td>
+            <td class="mono">§02 · C3 · D7 · D9 · readiness</td>
+          </tr>
+          <tr>
+            <td><span class="lane-pill L2"><span class="sw"></span>L2 · P2</span></td>
+            <td>Standard/Team plans via assign-plan; trials, ramps, licenses, add-ons; sub lifecycle (pause/resume/cancel/switch)</td>
+            <td class="mono">NG + US</td>
+            <td>Nimbus Starter, Pro</td>
+            <td class="mono">A1 · A2 · A5 · A7 · F</td>
+          </tr>
+          <tr>
+            <td><span class="lane-pill L3"><span class="sw"></span>L3 · P3</span></td>
+            <td>Product purchase links → hosted checkout (configure-before-pay), individual/company, pre-order activation</td>
+            <td class="mono">UK + DE</td>
+            <td>Nimbus Business, configurable features</td>
+            <td class="mono">A3 · B1 · B2 · B4 · B5 · E</td>
+          </tr>
+          <tr>
+            <td><span class="lane-pill L4"><span class="sw"></span>L4 · P4</span></td>
+            <td>One-off orders, merch, services, installments, pre-paid credit + redeem, reward points, occurrence plan, baskets</td>
+            <td class="mono">Kenya + NG</td>
+            <td>Hoodie, Stickers, services, Credits, Rewards, Events</td>
+            <td class="mono">A4 · A6 · E5 · E8 · E9</td>
+          </tr>
+          <tr>
+            <td><span class="lane-pill L5"><span class="sw"></span>L5 · P5</span></td>
+            <td>All payment paths + <b>adversarial reflection cross-check</b> of everyone's results; files bugs</td>
+            <td class="mono">all · roams</td>
+            <td>Add-on / pricing variants, discount codes</td>
+            <td class="mono">C1 · C2 · B3 · D×all · E1–E3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6 · CONVENTIONS -->
+  <section id="conventions">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Conventions &amp; tracking</h2></div>
+    <div class="grid three">
+      <div class="card">
+        <p class="meta">Test cards · never real</p>
+        <h3>Cards</h3>
+        <ul>
+          <li>Paystack (NG/KE): <span class="mono">4084 0840 8408 4081</span>, exp <span class="mono">12/30</span>, CVV <span class="mono">408</span></li>
+          <li>Stripe (US/UK/DE): <span class="mono">4242 4242 4242 4242</span>, any future exp / CVC</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Avoid collisions</p>
+        <h3>Naming</h3>
+        <ul>
+          <li>Prefix created data with the lane: <span class="mono">L3-Acme Ltd</span>, <span class="mono">L4-Hoodie-KE</span>.</li>
+          <li>Use realistic company / customer names.</li>
+          <li>One shared login (or per-person <span class="mono">BusinessUser</span> if RBAC seats set up).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="meta">Shared tracker · one sheet</p>
+        <h3>Columns</h3>
+        <div class="tokgrid">
+          <span class="tok">Scenario ID</span><span class="tok">Owner</span><span class="tok">Flow</span>
+          <span class="tok">Country</span><span class="tok">Product</span><span class="tok">Modifiers</span>
+          <span class="tok">Expected</span><span class="tok">Actual</span><span class="tok">Status</span>
+          <span class="tok">Bug link</span><span class="tok">Notes</span>
+        </div>
+        <ul><li>ID like <span class="mono">A1-record_offline-NG</span>. Group by lane + letter.</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · DONE -->
+  <section id="done">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Definition of done</h2><p>a scenario passes only when it also reflects correctly</p></div>
+    <div class="checks" data-group="DONE">
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc">Sale / Subscription / Order + Invoice created with correct amount, currency, and <b>tax</b></span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc">Sales list + billing history (invoices/transactions) + subscription billing all show it, SID/QID + Invoice ID populated</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc">Paid pre-order drops off the list and becomes a Sale</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc">Discounts / trials / ramps / installments reflected in charged amount and schedule</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc"><b>Every cost summary reconciled</b> across assign-plan, checkout, product-link, switch/buy/extend, and pre-order — each equals what was charged</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc"><b>Reflection is complete</b>: sales list, billing history, subscription billing, <b>product overview</b>, <b>operating-entity detail</b>, and entity-scoped lists all show the right records</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">✓</span> <span class="desc"><b>Coverage sign-off</b>: every product type + all plans in the matrix built · every entitlement mode on a plan (incl. overage, hard-block, reset, time-based) · buy-extra &amp; extend-feature · plan switch up + down · all 6 sale-activation + 7 pre-order options · publish→grandfather (both true/false) + migration · time-bound auto-expire · event-based · alternate pricing · contract terms (fees + T&amp;C) · inventory + sell-to (country &amp; entity) · geolocated link · both payment methods per country · all 5 countries transacted in</span></div></label>
+    </div>
+  </section>
+
+  <!-- 8 · CAVEATS -->
+  <section id="caveats">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Known caveats</h2></div>
+    <div class="grid two">
+      <div class="card" style="border-left:4px solid var(--warn)">
+        <h3>Cold-start flakiness</h3>
+        <ul><li>Staging's first heavy request can 500 while still committing. Retry once before filing; big writes take 30–60s.</li></ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--warn)">
+        <h3>Country limits</h3>
+        <ul><li>Japan &amp; Brazil are inactive — can't register or activate. Stick to the 5.</li></ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--l3)">
+        <h3>Edge product types</h3>
+        <ul><li><span class="mono">occurrence_plan · occurrence_addon · pre_paid_credit · reward_points · bundle</span> are lower-traffic and where new bugs likely hide — treat findings as discovery.</li></ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--crit)">
+        <h3>Deploy gate</h3>
+        <ul><li>Confirm this session's <span class="mono">develop</span>/<span class="mono">development</span> fixes are on staging before starting (top of page).</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Progress</b> — <span id="progtext" class="mono">0 / 0</span> scenarios ticked (saved in this browser only, per tester).
+    Reset with <span class="kbd">R</span> then confirm, or clear site data. This playbook covers the flows;
+    the shared tracker sheet holds the results.</p>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var KEY = "nimbus-playbook-v1";
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('label.chk input[type=checkbox]'));
+    // stable id per checkbox = group + index
+    boxes.forEach(function (b, i) {
+      var grp = b.closest('.checks') ? b.closest('.checks').getAttribute('data-group') : 'x';
+      b.dataset.key = grp + '-' + i;
+    });
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { saved = {}; }
+    boxes.forEach(function (b) { if (saved[b.dataset.key]) b.checked = true; });
+
+    var bar = document.getElementById('progbar');
+    var txt = document.getElementById('progtext');
+    function render() {
+      var done = boxes.filter(function (b) { return b.checked; }).length;
+      var pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+      if (bar) bar.style.width = pct + '%';
+      if (txt) txt.textContent = done + ' / ' + boxes.length;
+    }
+    function persist() {
+      var o = {};
+      boxes.forEach(function (b) { if (b.checked) o[b.dataset.key] = 1; });
+      try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+    }
+    boxes.forEach(function (b) {
+      b.addEventListener('change', function () { persist(); render(); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'r' || e.key === 'R') && !/input|textarea/i.test(document.activeElement.tagName)) {
+        if (confirm('Reset all ticked scenarios in this browser?')) {
+          boxes.forEach(function (b) { b.checked = false; });
+          persist(); render();
+        }
+      }
+    });
+    render();
+  })();
+</script>
+</body>
+</html>

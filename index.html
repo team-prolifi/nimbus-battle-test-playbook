@@ -353,13 +353,17 @@
       emails/phones are test-only. Money is per currency; annual = 10× monthly (two months free).</p>
 
     <h3 style="margin:26px 0 10px;font-size:16px">Shared credentials &amp; keys</h3>
+    <p class="lede" style="margin-top:0"><b>Every email is a plus-alias of one inbox</b> — <span class="mono">prolifitest+&lt;label&gt;@gmail.com</span>
+      throughout (merchant, team users, customers, operating entities). Gmail routes all aliases to the single
+      <span class="mono">prolifitest@gmail.com</span> mailbox, so the whole team receives every OTP, payment link, invoice and
+      confirmation in one place. Never use a real personal email.</p>
     <div class="grid three">
       <div class="card">
-        <p class="meta">Merchant login</p>
+        <p class="meta">Merchant login (Owner)</p>
         <ul>
-          <li>Register once: <span class="mono">nimbus.qa@example.com</span></li>
-          <li>Password: pick a strong shared one (min 8, upper+lower+digit+symbol), store in the tracker.</li>
-          <li>Add each tester as a <span class="mono">BusinessUser</span> if RBAC seats are set up.</li>
+          <li>Register once as the Owner: <span class="mono">prolifitest+nimbus@gmail.com</span></li>
+          <li>Password: one strong shared pw (min 8, upper+lower+digit+symbol), store in the tracker.</li>
+          <li>Invite the other testers as users with roles (table below).</li>
         </ul>
       </div>
       <div class="card">
@@ -379,16 +383,31 @@
       </div>
     </div>
 
+    <h3 style="margin:28px 0 10px;font-size:16px">Team users &amp; roles <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— invite under Settings → Team; one workstream each</span></h3>
+    <div class="table-scroll">
+      <table style="min-width:520px">
+        <thead><tr><th>Tester</th><th>Role</th><th>Login email</th></tr></thead>
+        <tbody>
+          <tr><td>P1 · lead</td><td>Owner</td><td class="mono">prolifitest+nimbus@gmail.com</td></tr>
+          <tr><td>P2</td><td>Admin</td><td class="mono">prolifitest+admin@gmail.com</td></tr>
+          <tr><td>P3</td><td>Finance / Billing</td><td class="mono">prolifitest+finance@gmail.com</td></tr>
+          <tr><td>P4</td><td>Sales</td><td class="mono">prolifitest+sales@gmail.com</td></tr>
+          <tr><td>P5</td><td>Support / QA</td><td class="mono">prolifitest+support@gmail.com</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:8px">Assign each the closest RBAC role — running different roles also exercises permission gating. Invites land in the shared inbox, so anyone can accept them.</p>
+
     <h3 style="margin:28px 0 10px;font-size:16px">Operating entities <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— one per country; Nigeria is created at registration</span></h3>
     <div class="table-scroll">
       <table style="min-width:820px">
         <thead><tr><th>Country</th><th>Legal name</th><th>Trading</th><th class="mono">Reg no.</th><th class="mono">Tax ID</th><th>Business email</th><th>Registered address</th></tr></thead>
         <tbody>
-          <tr><td>Nigeria <span class="mono" style="color:var(--muted)">· domicile</span></td><td>Nimbus Cloud Limited</td><td>Nimbus</td><td class="mono">RC-7788123</td><td class="mono">20241234-0001</td><td class="mono">ops.ng@nimbus.example</td><td>12 Adeola Odeku St, Victoria Island, Lagos, 101241</td></tr>
-          <tr><td>United States</td><td>Nimbus Cloud Inc</td><td>Nimbus</td><td class="mono">—</td><td class="mono">EIN 47-1234567</td><td class="mono">ops.us@nimbus.example</td><td>500 Market St, Suite 400, San Francisco, CA 94105</td></tr>
-          <tr><td>United Kingdom</td><td>Nimbus Cloud Ltd</td><td>Nimbus</td><td class="mono">12345678</td><td class="mono">VAT GB123456789</td><td class="mono">ops.uk@nimbus.example</td><td>1 Deansgate, Manchester, M3 1SB</td></tr>
-          <tr><td>Kenya</td><td>Nimbus Cloud Kenya Ltd</td><td>Nimbus</td><td class="mono">CPR/2021/12345</td><td class="mono">KRA P051234567X</td><td class="mono">ops.ke@nimbus.example</td><td>Westlands Rd, ABC Place, Nairobi, 00600</td></tr>
-          <tr><td>Germany</td><td>Nimbus Cloud GmbH</td><td>Nimbus</td><td class="mono">HRB 234567</td><td class="mono">VAT DE123456789</td><td class="mono">ops.de@nimbus.example</td><td>Maximilianstraße 35, München, 80539</td></tr>
+          <tr><td>Nigeria <span class="mono" style="color:var(--muted)">· domicile</span></td><td>Nimbus Cloud Limited</td><td>Nimbus</td><td class="mono">RC-7788123</td><td class="mono">20241234-0001</td><td class="mono">prolifitest+ops-ng@gmail.com</td><td>12 Adeola Odeku St, Victoria Island, Lagos, 101241</td></tr>
+          <tr><td>United States</td><td>Nimbus Cloud Inc</td><td>Nimbus</td><td class="mono">—</td><td class="mono">EIN 47-1234567</td><td class="mono">prolifitest+ops-us@gmail.com</td><td>500 Market St, Suite 400, San Francisco, CA 94105</td></tr>
+          <tr><td>United Kingdom</td><td>Nimbus Cloud Ltd</td><td>Nimbus</td><td class="mono">12345678</td><td class="mono">VAT GB123456789</td><td class="mono">prolifitest+ops-uk@gmail.com</td><td>1 Deansgate, Manchester, M3 1SB</td></tr>
+          <tr><td>Kenya</td><td>Nimbus Cloud Kenya Ltd</td><td>Nimbus</td><td class="mono">CPR/2021/12345</td><td class="mono">KRA P051234567X</td><td class="mono">prolifitest+ops-ke@gmail.com</td><td>Westlands Rd, ABC Place, Nairobi, 00600</td></tr>
+          <tr><td>Germany</td><td>Nimbus Cloud GmbH</td><td>Nimbus</td><td class="mono">HRB 234567</td><td class="mono">VAT DE123456789</td><td class="mono">prolifitest+ops-de@gmail.com</td><td>Maximilianstraße 35, München, 80539</td></tr>
         </tbody>
       </table>
     </div>
@@ -416,16 +435,16 @@
       <table style="min-width:1000px">
         <thead><tr><th>#</th><th>Name / Company</th><th class="mono">Type</th><th>Email · phone</th><th class="mono">Country·Cur</th><th class="mono">Tax / VAT ID</th><th>Billing address</th><th>Simulates</th></tr></thead>
         <tbody>
-          <tr><td class="mono">1</td><td>Chidi Okafor</td><td class="mono">individual</td><td class="mono">chidi.okafor+nimbus@example.com · +234 802 555 0142</td><td class="mono">NG · NGN</td><td class="mono">—</td><td>14 Awolowo Rd, Ikoyi, Lagos, 101233</td><td>Starter plan · card (Paystack) · 14-day trial → convert</td></tr>
-          <tr><td class="mono">2</td><td>Sarah Bennett</td><td class="mono">individual</td><td class="mono">sarah.bennett+nimbus@example.com · +1 415 555 0177</td><td class="mono">US · USD</td><td class="mono">—</td><td>500 Market St, San Francisco, CA 94105</td><td>One-off merch (Hoodie) · card (Stripe) · Pro monthly</td></tr>
-          <tr><td class="mono">3</td><td>James Whitmore</td><td class="mono">individual</td><td class="mono">james.whitmore+nimbus@example.com · +44 20 7946 0123</td><td class="mono">UK · GBP</td><td class="mono">—</td><td>22 Baker St, London, W1U 3BW</td><td>Annual billing + coupon · subscription link (B4)</td></tr>
-          <tr><td class="mono">4</td><td>Amina Wanjiru</td><td class="mono">individual</td><td class="mono">amina.wanjiru+nimbus@example.com · +254 712 555 088</td><td class="mono">KE · KES</td><td class="mono">—</td><td>8 Kenyatta Ave, Nairobi, 00100</td><td>Mobile money (Flutterwave/M-Pesa) · pre-paid credit buy + redeem</td></tr>
-          <tr><td class="mono">5</td><td>Lukas Vogel</td><td class="mono">individual</td><td class="mono">lukas.vogel+nimbus@example.com · +49 30 5557 0190</td><td class="mono">DE · EUR</td><td class="mono">—</td><td>Torstraße 12, Berlin, 10119</td><td>Trial → convert · price ramp · VAT 19% exclusive</td></tr>
-          <tr><td class="mono">6</td><td>Zenith Logistics Ltd</td><td class="mono">company</td><td class="mono">billing@zenithlogistics.example · +234 803 555 0210</td><td class="mono">NG · NGN</td><td class="mono">TIN 12345678-0001</td><td>3 Marina Rd, Lagos Island, Lagos, 101001</td><td>Team plan + seat licenses · offline bank transfer · net-30 · partial-then-full confirm</td></tr>
-          <tr><td class="mono">7</td><td>Brightpath Inc</td><td class="mono">company</td><td class="mono">ap@brightpath.example · +1 212 555 0198</td><td class="mono">US · USD</td><td class="mono">EIN 47-7654321</td><td>350 5th Ave, New York, NY 10118</td><td>Subscription + add-ons · installment on Implementation · invoice-link pay (B4)</td></tr>
-          <tr><td class="mono">8</td><td>Harbour &amp; Co Ltd</td><td class="mono">company</td><td class="mono">accounts@harbourco.example · +44 161 555 0155</td><td class="mono">UK · GBP</td><td class="mono">VAT GB987654321</td><td>1 Deansgate, Manchester, M3 1SB</td><td>Company checkout w/ VAT id · VAT 20% · multi-product basket (A6/B4)</td></tr>
-          <tr><td class="mono">9</td><td>Savanna Retail Ltd</td><td class="mono">company</td><td class="mono">finance@savannaretail.example · +254 733 555 021</td><td class="mono">KE · KES</td><td class="mono">KRA P051234999Z</td><td>Westlands Rd, Nairobi, 00600</td><td>Reward points · occurrence plan · manual discount</td></tr>
-          <tr><td class="mono">10</td><td>Nordwind GmbH</td><td class="mono">company</td><td class="mono">rechnung@nordwind.example · +49 89 5557 0233</td><td class="mono">DE · EUR</td><td class="mono">VAT DE987654321</td><td>Maximilianstraße 35, München, 80539</td><td>EU VAT B2B · assign-plan send-link → company pays · add-to-next-bill</td></tr>
+          <tr><td class="mono">1</td><td>Chidi Okafor</td><td class="mono">individual</td><td class="mono">prolifitest+chidi@gmail.com · +234 802 555 0142</td><td class="mono">NG · NGN</td><td class="mono">—</td><td>14 Awolowo Rd, Ikoyi, Lagos, 101233</td><td>Starter plan · card (Paystack) · 14-day trial → convert</td></tr>
+          <tr><td class="mono">2</td><td>Sarah Bennett</td><td class="mono">individual</td><td class="mono">prolifitest+sarah@gmail.com · +1 415 555 0177</td><td class="mono">US · USD</td><td class="mono">—</td><td>500 Market St, San Francisco, CA 94105</td><td>One-off merch (Hoodie) · card (Stripe) · Pro monthly</td></tr>
+          <tr><td class="mono">3</td><td>James Whitmore</td><td class="mono">individual</td><td class="mono">prolifitest+james@gmail.com · +44 20 7946 0123</td><td class="mono">UK · GBP</td><td class="mono">—</td><td>22 Baker St, London, W1U 3BW</td><td>Annual billing + coupon · subscription link (B4)</td></tr>
+          <tr><td class="mono">4</td><td>Amina Wanjiru</td><td class="mono">individual</td><td class="mono">prolifitest+amina@gmail.com · +254 712 555 088</td><td class="mono">KE · KES</td><td class="mono">—</td><td>8 Kenyatta Ave, Nairobi, 00100</td><td>Mobile money (Flutterwave/M-Pesa) · pre-paid credit buy + redeem</td></tr>
+          <tr><td class="mono">5</td><td>Lukas Vogel</td><td class="mono">individual</td><td class="mono">prolifitest+lukas@gmail.com · +49 30 5557 0190</td><td class="mono">DE · EUR</td><td class="mono">—</td><td>Torstraße 12, Berlin, 10119</td><td>Trial → convert · price ramp · VAT 19% exclusive</td></tr>
+          <tr><td class="mono">6</td><td>Zenith Logistics Ltd</td><td class="mono">company</td><td class="mono">prolifitest+zenith@gmail.com · +234 803 555 0210</td><td class="mono">NG · NGN</td><td class="mono">TIN 12345678-0001</td><td>3 Marina Rd, Lagos Island, Lagos, 101001</td><td>Team plan + seat licenses · offline bank transfer · net-30 · partial-then-full confirm</td></tr>
+          <tr><td class="mono">7</td><td>Brightpath Inc</td><td class="mono">company</td><td class="mono">prolifitest+brightpath@gmail.com · +1 212 555 0198</td><td class="mono">US · USD</td><td class="mono">EIN 47-7654321</td><td>350 5th Ave, New York, NY 10118</td><td>Subscription + add-ons · installment on Implementation · invoice-link pay (B4)</td></tr>
+          <tr><td class="mono">8</td><td>Harbour &amp; Co Ltd</td><td class="mono">company</td><td class="mono">prolifitest+harbour@gmail.com · +44 161 555 0155</td><td class="mono">UK · GBP</td><td class="mono">VAT GB987654321</td><td>1 Deansgate, Manchester, M3 1SB</td><td>Company checkout w/ VAT id · VAT 20% · multi-product basket (A6/B4)</td></tr>
+          <tr><td class="mono">9</td><td>Savanna Retail Ltd</td><td class="mono">company</td><td class="mono">prolifitest+savanna@gmail.com · +254 733 555 021</td><td class="mono">KE · KES</td><td class="mono">KRA P051234999Z</td><td>Westlands Rd, Nairobi, 00600</td><td>Reward points · occurrence plan · manual discount</td></tr>
+          <tr><td class="mono">10</td><td>Nordwind GmbH</td><td class="mono">company</td><td class="mono">prolifitest+nordwind@gmail.com · +49 89 5557 0233</td><td class="mono">DE · EUR</td><td class="mono">VAT DE987654321</td><td>Maximilianstraße 35, München, 80539</td><td>EU VAT B2B · assign-plan send-link → company pays · add-to-next-bill</td></tr>
         </tbody>
       </table>
     </div>

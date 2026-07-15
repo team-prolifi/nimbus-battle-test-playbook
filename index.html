@@ -536,7 +536,7 @@
     </div>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Usage metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— create these FIRST · metered features require one</span></h3>
-    <p class="lede" style="margin-top:0">A metered feature (allowance or consumption) needs a <b>Usage Metric</b> to exist before you can create it — the metric supplies the unit label. Create these four, then build the features.</p>
+    <p class="lede" style="margin-top:0">A metered feature (allowance or consumption) needs a <b>Usage Metric</b> to exist before you can create it — the metric supplies the unit label. Create these nine, then build the features. (Boolean features — 2FA, Advanced Analytics, SSO — need no metric.)</p>
     <div class="table-scroll">
       <table style="min-width:480px">
         <thead><tr><th>Metric name</th><th class="mono">Unit</th><th>Used by</th></tr></thead>
@@ -545,6 +545,11 @@
           <tr><td>API Calls</td><td class="mono">calls</td><td>API Calls</td></tr>
           <tr><td>SMS</td><td class="mono">messages</td><td>SMS Notifications</td></tr>
           <tr><td>Support Hours</td><td class="mono">hours</td><td>Support Hours</td></tr>
+          <tr><td>Projects</td><td class="mono">projects</td><td>Projects</td></tr>
+          <tr><td>Bandwidth</td><td class="mono">GB</td><td>Bandwidth</td></tr>
+          <tr><td>Emails</td><td class="mono">emails</td><td>Email Sends</td></tr>
+          <tr><td>Webhook Events</td><td class="mono">events</td><td>Webhooks</td></tr>
+          <tr><td>Peak Hours</td><td class="mono">hours</td><td>Peak-Hours Access</td></tr>
         </tbody>
       </table>
     </div>
@@ -554,7 +559,7 @@
       <b>Feature Type</b> on step 1 (radio cards: <span class="tok">Boolean</span> <span class="tok">Metered Allowance</span> <span class="tok">Metered Consumption</span>),
       then details on step 2. <b>Entitlement Packaging</b> (Quantity / Range; "Dependent" is present but <b>disabled in the UI</b> — flag
       it — so a dependent feature can't be created here). Package options and prices come later, in setup and in each plan's mapping.
-      Create all six below.</p>
+      Create all twelve below.</p>
     <div class="grid two">
       <div class="fillcard">
         <p class="meta">Metered Allowance · Quantity</p>
@@ -627,6 +632,77 @@
         </tbody></table>
         <p class="note" style="margin:8px 0 0"><b>Edge to test</b>: "Dependent" packaging is disabled in the create UI — you can't build a feature gated on another. Flag it; treat Advanced Analytics as a plain Boolean for now.</p>
       </div>
+      <div class="fillcard">
+        <p class="meta">Boolean · paid enable</p>
+        <h3 style="margin:2px 0 8px">SSO (SAML / OIDC)</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Boolean</td></tr>
+          <tr><td>Feature Name</td><td><b>SSO (SAML / OIDC)</b></td></tr>
+          <tr><td>Describe this feature</td><td>Enterprise single sign-on.</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0">Not included by default — on Pro it's a <b>paid enable</b> via the Fixed scheme <span class="mono">SSO — Fixed Enable</span> (+fee).</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Quantity</p>
+        <h3 style="margin:2px 0 8px">Projects</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Projects</b></td></tr>
+          <tr><td>Usage Metric</td><td>Projects (projects)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 5 (default) · 20 · 100 · Unlimited. Additional via <span class="mono">Projects — Per Unit</span>.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Range</p>
+        <h3 style="margin:2px 0 8px">Bandwidth</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Bandwidth</b></td></tr>
+          <tr><td>Usage Metric</td><td>Bandwidth (GB)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 5,000 GB. Banded pricing via <span class="mono">Bandwidth — Tiered</span> (Tier 2 / Tier 3).</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Consumption · Quantity · hard block</p>
+        <h3 style="margin:2px 0 8px">Email Sends</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+          <tr><td>Feature Name</td><td><b>Email Sends</b></td></tr>
+          <tr><td>Usage Metric</td><td>Emails (emails)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 100 · 1,000 · 10,000 · 50,000. <b>No overage → hard block</b> at the cap (no extra-pricing scheme).</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Quantity</p>
+        <h3 style="margin:2px 0 8px">Webhooks</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Webhooks</b></td></tr>
+          <tr><td>Usage Metric</td><td>Webhook Events (events)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 1,000 · 10,000 · Unlimited. Intended to <b>depend on API Calls</b> — that gating can't be set (Dependent disabled), so flag it.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Range · time-based</p>
+        <h3 style="margin:2px 0 8px">Peak-Hours Access</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Peak-Hours Access</b></td></tr>
+          <tr><td>Usage Metric</td><td>Peak Hours (hours)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 100 hours. Scope access + pricing to a window via <b>Time-based Access</b> / <b>Time-based Pricing</b> (used on Business · scenario F8).</p>
+      </div>
     </div>
 
     <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Feature → plan overview <span class="mono" style="color:var(--muted);font-weight:400;font-size:12px">— the detailed "Set Entitlements" values live in each plan card below</span></p>
@@ -636,14 +712,20 @@
         <tbody>
           <tr><td>Cloud Storage</td><td>Fixed · 50 GB</td><td>Variable · 250 GB incl</td><td>Fixed · 500 GB</td></tr>
           <tr><td>API Calls</td><td class="mono">—</td><td>Pay-for-what-you-use</td><td>Variable · 100,000 incl</td></tr>
-          <tr><td>SMS Notifications</td><td class="mono">—</td><td>Variable · 2,000 incl</td><td class="mono">—</td></tr>
+          <tr><td>SMS Notifications</td><td class="mono">—</td><td>Variable · 2,000 incl</td><td>Variable · 10,000 incl</td></tr>
           <tr><td>Support Hours</td><td>Fixed · 5 hrs</td><td>Fixed · 20 hrs</td><td>Fixed · 40 hrs</td></tr>
           <tr><td>Two-Factor Auth</td><td>On</td><td>On</td><td>On</td></tr>
           <tr><td>Advanced Analytics</td><td class="mono">—</td><td>On</td><td>On</td></tr>
+          <tr><td>SSO (SAML/OIDC)</td><td class="mono">—</td><td>+fee (enable)</td><td>On</td></tr>
+          <tr><td>Projects</td><td>Fixed · 5</td><td>Fixed · 20</td><td>Fixed · 100</td></tr>
+          <tr><td>Bandwidth</td><td class="mono">—</td><td>Tier 2</td><td>Tier 3</td></tr>
+          <tr><td>Email Sends</td><td>Fixed · 100</td><td>Fixed · 1,000</td><td>Fixed · 10,000</td></tr>
+          <tr><td>Webhooks</td><td class="mono">—</td><td class="mono">—</td><td>On</td></tr>
+          <tr><td>Peak-Hours Access</td><td class="mono">—</td><td class="mono">—</td><td>On · time-based</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note" style="margin:8px 0 0"><b>Pricing schemes to create</b> (in the pricing step / Alternate Pricing, used by Variable &amp; PAYG mappings): <span class="mono">Storage — Per Unit</span> (Per Unit $0.10/GB) · <span class="mono">API Calls — Tiered</span> (Tiered: 0–50k $0.002 · 50k–200k $0.0015 · 200k+ $0.001 per call) · <span class="mono">SMS — Stair-Step</span> (Stair-Step: 0–1k $0.05 · 1k–5k $0.04 · 5k+ $0.03 per SMS) · <span class="mono">Extra Storage — Volume</span> (Volume, used by the add-on).</p>
+    <p class="note" style="margin:8px 0 0"><b>Pricing schemes to create</b> (in the pricing step / Alternate Pricing, used by Variable / PAYG / paid-enable mappings): <span class="mono">Storage — Per Unit</span> (Per Unit $0.10/GB) · <span class="mono">API Calls — Tiered</span> (0–50k $0.002 · 50k–200k $0.0015 · 200k+ $0.001 per call) · <span class="mono">SMS — Stair-Step</span> (0–1k $0.05 · 1k–5k $0.04 · 5k+ $0.03 per SMS) · <span class="mono">Extra Storage — Volume</span> (Volume, add-on) · <span class="mono">SSO — Fixed Enable</span> (Fixed +fee: NG ₦3,000 · US $2 · UK £1.60 · KE KSh 260 · DE €1.85 /mo) · <span class="mono">Projects — Per Unit</span> (Per Unit $1/project) · <span class="mono">Bandwidth — Tiered</span> (banded: Tier 1 ≤500 GB incl · Tier 2 ≤2,000 GB · Tier 3 ≤5,000 GB).</p>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Add-ons <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Add-ons → Create · build BEFORE plans (plans attach them)</span></h3>
     <p class="lede" style="margin-top:0">Create the add-on (identity + billing method only), set its price in the add-on's own setup, then <b>attach it to a plan</b>
@@ -740,10 +822,12 @@
       </tbody></table>
       <p class="subh">Setup 2 · Features &amp; Entitlements — "Set Entitlements" per feature</p>
       <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
-        <table style="min-width:0"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
+        <table style="min-width:520px"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
           <tr><td>Cloud Storage</td><td>Fixed</td><td>50 GB</td><td>Switch Plan (→ Pro)</td></tr>
-          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
+          <tr><td>Projects</td><td>Fixed</td><td>5</td><td class="mono">—</td></tr>
+          <tr><td>Email Sends</td><td>Fixed</td><td>100 · hard block (no overage)</td><td class="mono">—</td></tr>
           <tr><td>Support Hours</td><td>Fixed</td><td>5 hours</td><td class="mono">—</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
         </tbody></table>
       </div>
       <p class="subh">Setup 3 · Prices per country (Monthly / Annual)</p>
@@ -768,13 +852,17 @@
       </tbody></table>
       <p class="subh">Setup 2 · Features &amp; Entitlements — "Set Entitlements" per feature</p>
       <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
-        <table style="min-width:560px"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Config</th><th>Extension Rule</th></tr></thead><tbody>
+        <table style="min-width:600px"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Config</th><th>Extension Rule</th></tr></thead><tbody>
           <tr><td>Cloud Storage</td><td>Variable</td><td>Included 250 GB · additional options 500 GB + Unlimited · scheme <span class="mono">Storage — Per Unit</span></td><td>User can extend · bill End of cycle · Max 2,000 GB</td></tr>
           <tr><td>API Calls</td><td>Pay for what you use</td><td>scheme <span class="mono">API Calls — Tiered</span> · Billing Frequency Recurring · Min committed 10,000 · Max 1,000,000</td><td>Pay as you go</td></tr>
           <tr><td>SMS Notifications</td><td>Variable</td><td>Included 2,000 · additional option 5,000 · scheme <span class="mono">SMS — Stair-Step</span></td><td>User can extend · bill After extension</td></tr>
-          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
+          <tr><td>SSO (SAML/OIDC)</td><td>Fixed (Boolean)</td><td>Paid enable · scheme <span class="mono">SSO — Fixed Enable</span> (+fee)</td><td class="mono">—</td></tr>
+          <tr><td>Projects</td><td>Fixed</td><td>20</td><td class="mono">—</td></tr>
+          <tr><td>Bandwidth</td><td>Fixed (Range)</td><td>Tier 2 (≤2,000 GB) · scheme <span class="mono">Bandwidth — Tiered</span></td><td class="mono">—</td></tr>
+          <tr><td>Email Sends</td><td>Fixed</td><td>1,000 · hard block</td><td class="mono">—</td></tr>
           <tr><td>Advanced Analytics</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
           <tr><td>Support Hours</td><td>Fixed</td><td>20 hours</td><td class="mono">—</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
         </tbody></table>
       </div>
       <p class="subh">Setup 2 · Time-based access (for the F scenarios) — on API Calls</p>
@@ -818,12 +906,19 @@
       </tbody></table>
       <p class="subh">Setup 2 · Features &amp; Entitlements</p>
       <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
-        <table style="min-width:0"><thead><tr><th>Feature</th><th>Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
+        <table style="min-width:600px"><thead><tr><th>Feature</th><th>Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
           <tr><td>Cloud Storage</td><td>Fixed</td><td>500 GB</td><td>Buy Add-on (Extra Storage 50GB)</td></tr>
           <tr><td>API Calls</td><td>Variable</td><td>Included 100,000 · scheme <span class="mono">API Calls — Tiered</span></td><td>Auto extend entitlement</td></tr>
-          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Enabled</td><td class="mono">—</td></tr>
+          <tr><td>SMS Notifications</td><td>Variable</td><td>Included 10,000 · scheme <span class="mono">SMS — Stair-Step</span></td><td>Auto Extend with Add-on (variant)</td></tr>
+          <tr><td>SSO (SAML/OIDC)</td><td>Fixed (Boolean)</td><td>Enabled (included)</td><td class="mono">—</td></tr>
+          <tr><td>Projects</td><td>Fixed</td><td>100</td><td class="mono">—</td></tr>
+          <tr><td>Bandwidth</td><td>Fixed (Range)</td><td>Tier 3 (≤5,000 GB)</td><td class="mono">—</td></tr>
+          <tr><td>Email Sends</td><td>Fixed</td><td>10,000 · hard block</td><td class="mono">—</td></tr>
+          <tr><td>Webhooks</td><td>Fixed</td><td>10,000 events · <span class="note">intended dependency on API Calls — flag</span></td><td class="mono">—</td></tr>
+          <tr><td>Peak-Hours Access</td><td>Fixed (Range)</td><td>window-scoped · Time-based Access + Pricing (F8)</td><td class="mono">—</td></tr>
           <tr><td>Advanced Analytics</td><td>Fixed (Boolean)</td><td>Enabled</td><td class="mono">—</td></tr>
           <tr><td>Support Hours</td><td>Fixed</td><td>40 hours</td><td class="mono">—</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Enabled</td><td class="mono">—</td></tr>
         </tbody></table>
       </div>
       <p class="subh">Setup 4 · Base-fee price per country (Monthly / Annual)</p>

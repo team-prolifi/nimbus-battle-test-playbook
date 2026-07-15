@@ -535,30 +535,51 @@
       <p class="note" style="margin:10px 0 0">Setup mirrors the credit scheme (availability · redemption rate per currency · packages). Set the same 1:1 rate per currency. Lower-traffic edge type — treat findings as discovery.</p>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Usage metering &amp; event metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— system-wide metering registry · build FIRST (metered features bind to a metric)</span></h3>
-    <p class="lede" style="margin-top:0">Prolifi has a <b>general, merchant-facing metering system</b> (Manage → <span class="mono">Usage → Events / Metrics / Event Streams</span>). It is
-      <b>not</b> credit-specific — it measures any usage. The chain: an <b>Event type</b> (+ typed properties) defines <em>what can happen</em> →
-      a <b>Metric</b> aggregates those events into a number (<span class="mono">count · count_unique · sum · max · latest · custom</span>, aggregating on a property) →
-      <b>Occurrences</b> (event streams) are the "it happened" records → a metered feature is measured by pointing its <b>Usage Metric</b> at one.
-      Build the event + metric for each metered feature <b>before</b> the feature (the feature's "Usage Metric" dropdown reads this registry).</p>
+    <p class="lede" style="margin-top:0">Prolifi has a <b>general, merchant-facing metering system</b> (Manage → <span class="mono">Usage</span>). It's <b>not</b> credit-specific — it measures any usage.
+      Two registries, built in order: <b>①&nbsp;Usage metering</b> defines the events and logs when they happen; <b>②&nbsp;Event metrics</b> aggregate those
+      events into numbers. A metered feature is then measured by pointing its <b>Usage Metric</b> at one of these metrics — so build both <b>before</b> the feature.</p>
+
+    <h3 style="margin:24px 0 10px;font-size:16px"><span class="mono" style="color:var(--accent-ink)">①</span> Usage metering <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— event types &amp; occurrences · Manage → Usage → Events / Event Streams</span></h3>
+    <p class="lede" style="margin-top:0">Register an <b>event type</b> (a level + typed properties) for each thing you meter; occurrences ("it happened") are logged to its <b>Event Stream</b> (single or bulk).</p>
     <div class="table-scroll">
-      <table style="min-width:920px">
-        <thead><tr><th>Event type <span class="mono" style="font-weight:400;color:var(--muted)">(level)</span></th><th>Key properties</th><th>Metric · unit</th><th class="mono">Aggregation</th><th>Measures feature</th></tr></thead>
+      <table style="min-width:760px">
+        <thead><tr><th>Event type <span class="mono" style="font-weight:400;color:var(--muted)">(level)</span></th><th>Key properties</th><th>Occurrence logged when…</th></tr></thead>
         <tbody>
-          <tr><td>Storage Snapshot <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">size_gb : float</td><td>Storage Used · GB</td><td class="mono">max · size_gb</td><td>Cloud Storage</td></tr>
-          <tr><td>API Call Made <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">endpoint : string</td><td>API Calls · calls</td><td class="mono">count</td><td>API Calls</td></tr>
-          <tr><td>SMS Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">segments : number</td><td>SMS Sent · messages</td><td class="mono">sum · segments</td><td>SMS Notifications</td></tr>
-          <tr><td>Support Time Logged <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>Support Hours Used · hours</td><td class="mono">sum · hours</td><td>Support Hours</td></tr>
-          <tr><td>Project Created <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Projects · projects</td><td class="mono">count</td><td>Projects</td></tr>
-          <tr><td>Bandwidth Sample <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">gb : float</td><td>Bandwidth Used · GB</td><td class="mono">sum · gb</td><td>Bandwidth</td></tr>
-          <tr><td>Email Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Emails Sent · emails</td><td class="mono">count</td><td>Email Sends</td></tr>
-          <tr><td>Webhook Delivered <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>Webhook Events · events</td><td class="mono">count</td><td>Webhooks</td></tr>
-          <tr><td>Peak Access Session <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>Peak Hours Used · hours</td><td class="mono">sum · hours</td><td>Peak-Hours Access</td></tr>
-          <tr><td>Prepaid Credit Consumed <span class="mono" style="color:var(--muted)">· customer</span></td><td class="mono">amount : float · currency : string</td><td>Credits Consumed · credits</td><td class="mono">sum · amount</td><td><span class="note">credit — ⚠ not emitted (PC14)</span></td></tr>
+          <tr><td>Storage Snapshot <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">size_gb : float</td><td>a stored-bytes snapshot is taken</td></tr>
+          <tr><td>API Call Made <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">endpoint : string</td><td>each API request</td></tr>
+          <tr><td>SMS Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">segments : number</td><td>each SMS dispatched</td></tr>
+          <tr><td>Support Time Logged <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>a support session is logged</td></tr>
+          <tr><td>Project Created <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>a project is created</td></tr>
+          <tr><td>Bandwidth Sample <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">gb : float</td><td>a bandwidth sample is recorded</td></tr>
+          <tr><td>Email Sent <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>each email dispatched</td></tr>
+          <tr><td>Webhook Delivered <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">— (none)</td><td>each webhook delivery</td></tr>
+          <tr><td>Peak Access Session <span class="mono" style="color:var(--muted)">· subscription</span></td><td class="mono">hours : float</td><td>a peak-hours access session</td></tr>
+          <tr><td>Prepaid Credit Consumed <span class="mono" style="color:var(--muted)">· customer</span></td><td class="mono">amount : float · currency : string</td><td><span class="note">on credit redeem — ⚠ not emitted today (PC14)</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="note" style="margin:8px 0 0"><b>How it's managed:</b> event types at <span class="mono">Usage → Events</span> (level = <span class="mono">customer_level</span> or <span class="mono">subscription_level</span>; add typed properties); metrics at <span class="mono">Usage → Metrics</span> (<span class="mono">metric_name</span> unique per merchant; <span class="mono">sum/max</span> require a numeric <span class="mono">aggregate_on</span> property that exists on the event; there's <b>Test computation</b> + <b>Batch compute</b>). Occurrences are logged to <span class="mono">Usage → Event Streams</span> (single or bulk). <b>Aggregation types to spread across your metrics: count · sum · max</b> (plus count_unique / latest / custom if you want fuller coverage). ⚠ Occurrences have <b>no idempotency key</b> — double-logging isn't prevented (test + flag).</p>
+    <p class="note" style="margin:8px 0 0"><b>Managed at</b> <span class="mono">Usage → Events</span> (level = <span class="mono">customer_level</span> / <span class="mono">subscription_level</span>; add typed properties — <span class="mono">string · number · float · date_time · boolean</span>; <span class="mono">event_id</span> unique per merchant). Occurrences logged at <span class="mono">Usage → Event Streams</span> (single or bulk). ⚠ Occurrences have <b>no idempotency key</b> — double-logging isn't prevented (test + flag).</p>
+
+    <h3 style="margin:24px 0 10px;font-size:16px"><span class="mono" style="color:var(--accent-ink)">②</span> Event metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— aggregations over events · Manage → Usage → Metrics</span></h3>
+    <p class="lede" style="margin-top:0">A <b>metric</b> rolls one event's occurrences into a number via an aggregation rule (<span class="mono">count · count_unique · sum · max · latest · custom</span>). Each metric is bound to exactly one event; a metered feature is measured by pointing its <b>Usage Metric</b> here. Spread the aggregation types (at least count · sum · max) across these.</p>
+    <div class="table-scroll">
+      <table style="min-width:760px">
+        <thead><tr><th>Metric · unit</th><th>Aggregates event</th><th class="mono">Aggregation (rule · aggregate_on)</th><th>Measures feature</th></tr></thead>
+        <tbody>
+          <tr><td>Storage Used · GB</td><td>Storage Snapshot</td><td class="mono">max · size_gb</td><td>Cloud Storage</td></tr>
+          <tr><td>API Calls · calls</td><td>API Call Made</td><td class="mono">count</td><td>API Calls</td></tr>
+          <tr><td>SMS Sent · messages</td><td>SMS Sent</td><td class="mono">sum · segments</td><td>SMS Notifications</td></tr>
+          <tr><td>Support Hours Used · hours</td><td>Support Time Logged</td><td class="mono">sum · hours</td><td>Support Hours</td></tr>
+          <tr><td>Projects · projects</td><td>Project Created</td><td class="mono">count</td><td>Projects</td></tr>
+          <tr><td>Bandwidth Used · GB</td><td>Bandwidth Sample</td><td class="mono">sum · gb</td><td>Bandwidth</td></tr>
+          <tr><td>Emails Sent · emails</td><td>Email Sent</td><td class="mono">count</td><td>Email Sends</td></tr>
+          <tr><td>Webhook Events · events</td><td>Webhook Delivered</td><td class="mono">count</td><td>Webhooks</td></tr>
+          <tr><td>Peak Hours Used · hours</td><td>Peak Access Session</td><td class="mono">sum · hours</td><td>Peak-Hours Access</td></tr>
+          <tr><td>Credits Consumed · credits</td><td>Prepaid Credit Consumed</td><td class="mono">sum · amount</td><td><span class="note">credit — event not emitted (PC14)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin:8px 0 0"><b>Managed at</b> <span class="mono">Usage → Metrics</span>: <span class="mono">metric_name</span> unique per merchant · <span class="mono">sum/max</span> require a numeric <span class="mono">aggregate_on</span> property that exists on the event · <b>Test computation</b> + <b>Batch compute</b> verify the rollup. Then bind a feature by setting its <b>Usage Metric</b> to one of these.</p>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Features <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Features → Create · define once, map per plan</span></h3>
     <p class="lede" style="margin-top:0">The <b>create form captures no price or availability</b> — only the feature's identity + type. You pick the

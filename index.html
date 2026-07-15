@@ -492,12 +492,14 @@
         <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
       </tbody></table>
     </div>
+    <p class="note" style="margin:2px 0 0"><b>Two different "prices" — don't confuse them:</b> the <b>purchase price</b> (Set Pricing, step 3) is the money a customer pays to <em>buy</em> a credit unit; the <b>redemption rate</b> (Redemption Model, step 4) is a gate/display value used when <em>spending</em> credits — it is <b>not</b> a currency conversion.</p>
     <div class="steps" style="margin-top:14px">
       <div class="step"><span class="n">1</span><div><h3>Setup → Get Started (availability)</h3><p>Turn on <b>Global Availability &amp; localisation</b>, then enable all 5 countries (NG · US · UK · KE · DE).</p></div></div>
-      <div class="step"><span class="n">2</span><div><h3>Setup → Redemption Model — one rate per currency</h3><p>"What is the value of one unit of this prepaid credit…?" Add a <b>Default Currency Redemption Rule</b> for each currency, all <b>1 : 1</b>, all <b>enabled</b>: <span class="mono">1 NGN = 1 Credit · 1 USD = 1 Credit · 1 GBP = 1 Credit · 1 KES = 1 Credit · 1 EUR = 1 Credit</span>. <b>A currency with no enabled rate can't be redeemed</b> — that's the gate.</p></div></div>
-      <div class="step"><span class="n">3</span><div><h3>Setup → Entitlement Packages (display tiles)</h3><p>Packaging = Quantity → add three: <b>1,000 Credits · 5,000 Credits · 10,000 Credits</b> (Display Name = the same text). Set <b>5,000</b> as default. Presets only — they carry no price.</p></div></div>
-      <div class="step"><span class="n">4</span><div><h3>Setup → (optional) Customer Type Overrides</h3><p>Add a customer-type-specific rate with an <b>overdraft limit</b> (e.g. Business customers, overdraft 5,000). This is the <b>only</b> place overdraft is enabled; without it a balance can never go negative.</p></div></div>
-      <div class="step"><span class="n">5</span><div><h3>Publish (Summary → Finish)</h3><p>Draft → active. Only a draft scheme can be deleted. <b>The scheme build ends here.</b></p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Setup → Entitlement Packages (purchasable quantities)</h3><p>Packaging = Quantity → add three: <b>1,000 Credits · 5,000 Credits · 10,000 Credits</b> (Display Name = the same text). Set <b>5,000</b> as default. These are the quantities a customer can buy; their money price comes from step 3.</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>Setup → Set Pricing — the price of a credit unit</h3><p>This is the step we were missing. Choose a pricing model (credit schemes allow <span class="mono">Per Unit · Volume · Tiered · Stair-Step</span>) and set the <b>money price per credit</b>, per country. Canonical: <b>Per Unit — 1 credit = 1 unit of local currency</b>: <span class="mono">NG ₦1 · US $1 · UK £1 · KE KSh 1 · DE €1</span> per credit (so a 5,000-credit pack costs 5,000 of that currency). To exercise a bulk discount instead, use <b>Volume</b> (e.g. 10,000+ credits at 5% off).</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>Setup → Redemption Model — one rate per currency</h3><p>"What is the value of one unit of this prepaid credit…?" Add a <b>Default Currency Redemption Rule</b> for each currency, all <b>1 : 1</b>, all <b>enabled</b>: <span class="mono">1 NGN = 1 Credit · 1 USD = 1 Credit · 1 GBP = 1 Credit · 1 KES = 1 Credit · 1 EUR = 1 Credit</span>. <b>A currency with no enabled rate can't be redeemed</b> — that's the gate (display/gate only, not a conversion).</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Setup → (optional) Customer Type Overrides</h3><p>Add a customer-type-specific rate with an <b>overdraft limit</b> (e.g. Business customers, overdraft 5,000). This is the <b>only</b> place overdraft is enabled; without it a balance can never go negative.</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Publish (Summary → Finish)</h3><p>Draft → active. Only a draft scheme can be deleted. <b>The scheme build ends here.</b></p></div></div>
     </div>
     <p class="note" style="margin:12px 0 0"><b>Accepting the credit is a product-side setting, not part of this build</b> — a consuming product enables <b>Accept pre-paid credit</b> (+ compatible schemes) in <em>its own</em> general settings when you build that product. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores it): record as a finding, not a gate. <b>Grant a balance, Redeem and Reverse</b> are run as scenarios <span class="mono">G1 · G2 · G3</span> (§05), not build steps.</p>
 
@@ -699,6 +701,25 @@
           <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
         </tbody></table>
         <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 100 hours. Scope access + pricing to a window via <b>Time-based Access</b> / <b>Time-based Pricing</b> (used on Business · scenario F8).</p>
+      </div>
+    </div>
+
+    <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Feature setup — detailed flow <span class="mono" style="color:var(--muted);font-weight:400;font-size:12px">— availability · packages · pricing · run before mapping to any plan</span></p>
+    <p class="lede" style="margin-top:0">After the bare create form, each feature has its own setup wizard (same Create → Setup pattern as products). Do all three
+      before mapping it onto a plan — a feature can only be mapped where it's <b>available</b> and priced.</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div><h3>Setup → Availability (per country)</h3><p>Turn on <b>Global Availability</b> + tick the countries the feature is sold in. Match the plans that will carry it — e.g. Cloud Storage &amp; API Calls in all 5; Peak-Hours Access only where Business sells. <b>Rule ①:</b> a feature <b>not available</b> in a country <b>cannot be mapped</b> to a plan in that country (it won't appear / mapping is blocked there).</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Setup → Entitlement Packages</h3><p>Quantity features → the option tiles (Cloud Storage 50/100/250/500/Unlimited; default 100 GB). Range features → Minimum / Maximum (Support Hours 0–40; Bandwidth 0–5,000 GB). These are the shapes a plan's "Set Entitlements" then draws from.</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>Setup → Set Pricing (per country or global)</h3><p>The scheme used to charge for extra capacity / enabling — <b>separate from the plan fee</b>. Allowed models: <b>Boolean → Fixed only</b>; <b>Metered (allowance/consumption) → Per Unit · Volume · Tiered · Stair-Step</b>. Enter a price per country, or a single <b>global</b> price. Build the named schemes from the list above (<span class="mono">Storage — Per Unit</span>, <span class="mono">API Calls — Tiered</span>, <span class="mono">SMS — Stair-Step</span>, <span class="mono">SSO — Fixed Enable</span>, <span class="mono">Projects — Per Unit</span>, <span class="mono">Bandwidth — Tiered</span>).</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>Then map per plan</h3><p>With availability + packages + pricing set, the feature can be added to a plan and configured in <b>Set Entitlements</b> (Fixed / Variable / Pay-for-what-you-use) — see the overview + plan cards below.</p></div></div>
+    </div>
+    <div class="callout" style="margin-top:12px">
+      <span class="ic">🔎</span>
+      <div>
+        <h3>Pricing-resolution rules to verify (at mapping / extension / checkout)</h3>
+        <p><b>② Country price wins:</b> where a per-country price exists, it's used and <b>overrides the global</b> — resolution is exact-country → global fallback.
+        <b>③ No country price → global via FX:</b> if a feature has no row for a country but has a global price, it resolves the local amount from the <b>global price + exchange rate</b> at mapping/checkout, not zero.
+        These three (① not-available → not-mappable, ② country-wins, ③ FX-fallback) are the reflection checks for feature pricing — confirm each renders the right amount in the right currency.</p>
       </div>
     </div>
 

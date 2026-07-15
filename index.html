@@ -126,7 +126,7 @@
     padding: 18px 20px; box-shadow: var(--shadow);
   }
   .card h3 { font-size: 15px; margin-bottom: 4px; }
-  .card .meta { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+  .card .meta, .fillcard .meta { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin: 0 0 4px; }
   .card ul { margin: 10px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; }
   .card ul li { margin: 4px 0; }
 
@@ -205,8 +205,9 @@
   .tok { font-family: var(--mono); font-size: 11.5px; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); }
   .tok.acc { color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); background: var(--accent-wash); }
 
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .two > *, .three > * { min-width: 0; }
   @media (max-width: 760px) { .two, .three { grid-template-columns: 1fr; } }
 
   .progress-bar { position: sticky; top: 0; z-index: 20; height: 3px; background: transparent; }
@@ -214,6 +215,14 @@
 
   footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
   .kbd { font-family: var(--mono); font-size: 12px; background: var(--surface); border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+  .fillcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .fillcard > h3 { font-size: 15px; }
+  table.kv { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.kv td { padding: 6px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; line-height: 1.45; }
+  table.kv tr:last-child td { border-bottom: none; }
+  table.kv td:first-child { color: var(--ink-2); width: 40%; font-weight: 500; }
+  .note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .subh { font-weight: 700; font-size: 12px; margin: 14px 0 6px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -279,12 +288,12 @@
   <section id="setup">
     <div class="sec-head"><span class="sec-num">02</span><h2>One-time shared setup</h2><p>order matters · P1 coordinates</p></div>
     <div class="steps">
-      <div class="step"><span class="n">1</span><div><h3>Register + verify email</h3><p><code>POST /api/v1/auth/register</code> as Nimbus Cloud Ltd, country = Nigeria. Auto-creates the domicile operating entity, brand, onboarding todos, and a pending collection country. Confirm the email OTP.</p></div></div>
+      <div class="step"><span class="n">1</span><div><h3>Register + verify email</h3><p>Sign up as <b>Nimbus Cloud Ltd</b>, email <span class="mono">prolifitest+nimbus@gmail.com</span>, country = Nigeria. Auto-creates the domicile operating entity, brand, onboarding checklist, and a pending collection country. Confirm the email OTP (shared inbox).</p></div></div>
       <div class="step"><span class="n">2</span><div><h3>Operating-entity KYC</h3><p>Module <code>setup_operating_entity</code> → business-country registration → information → contact (each OTP-gated).</p></div></div>
       <div class="step"><span class="n">3</span><div><h3>Brand</h3><p>Module <code>setup_brand</code>.</p></div></div>
       <div class="step"><span class="n">4</span><div><h3>Activate Nigeria (collect payment)</h3><p>CollectionCountry wizard → attach entity → collection method → billing config → currencies → request review → activate. Then PSP config (<b>Paystack test keys</b>) → payment profile → entity-profile-mapping (activate → set-default → enable ≥1 method). Readiness = active mapping + ≥1 enabled method.</p></div></div>
-      <div class="step"><span class="n">5</span><div><h3>Offline payment instruction (NG)</h3><p>Add a bank-transfer account so offline flows have something to pay to.</p></div></div>
-      <div class="step"><span class="n">6</span><div><h3>Tax config (NG)</h3><p><code>tax/method = merchant</code> → add VAT 7.5%, active.</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Offline payment instruction (NG)</h3><p><b>Setup Offline Payments → Add instruction</b>: Payment Method = Bank Transfer · Merchant Account Name <span class="mono">Nimbus Cloud Limited</span> · Country Nigeria · Currency NGN · Bank Name GTBank · Account Holder Name Nimbus Cloud Limited · Account Number <span class="mono">0123456789</span> · confirmation period 1–24 Hours. (Full account table in §04.)</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Tax config (NG)</h3><p><b>Tax method</b> = "You will setup the tax types and rates" (merchant) → <b>Add Tax Type</b>: Tax Title <span class="mono">VAT</span> · Application Level National · Tax Code VAT · Tax Rate <b>7.5 %</b> · treatment Tax Exclusive. Per country: UK 20% · DE 19% (inclusive) · KE 16% · US state Sales Tax (e.g. CA 8.5%).</p></div></div>
       <div class="step"><span class="n">7</span><div><h3>Activate global operations → repeat 4–6 per country</h3><p>Then US, UK, Kenya, Germany each get: activate + PSP + offline + tax. <b>Split it:</b> P2→US, P3→UK, P4→Kenya, P5→Germany — this battle-tests activate-operations + PSP + tax five times across currencies and providers.</p></div></div>
       <div class="step"><span class="n">8</span><div><h3>Add first product → build the catalog</h3><p>Module <code>add_first_product</code> → §03.</p></div></div>
     </div>
@@ -468,19 +477,31 @@
     </div>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Pre-paid credit <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— build &amp; test walkthrough · catalog step 1</span></h3>
-    <p class="lede" style="margin-top:0">A pre-paid credit scheme is just a <b>Product</b> with <span class="mono">product_type = pre_paid_credit</span>. The
-      <b>balance is real money, spent 1:1</b> — the "rate" you configure is a <b>gate/display only</b>, not a currency conversion.
-      Build it in this order; do all the setup on the <b>Nimbus Credits</b> scheme.</p>
-    <div class="steps">
-      <div class="step"><span class="n">1</span><div><h3>Create the scheme</h3><p><code>POST /credit-schemes</code> — <span class="mono">name</span> "Nimbus Credits" · <span class="mono">entitlement_packaging</span> quantity · metric labels credit/credits · <span class="mono">product_type</span> pre_paid_credit · <span class="mono">credit_consumption_rule</span> fifo · <span class="mono">burn_free_credit_first</span> true · <span class="mono">status</span> draft. Note: creation does <b>not</b> capture amount/rate/currency/expiry — those come next.</p></div></div>
-      <div class="step"><span class="n">2</span><div><h3>Set a redemption rate per currency</h3><p><code>POST /credit-schemes/{id}/redemption-rates</code> — one per currency you'll redeem in (NGN, USD…), <span class="mono">rate</span> 1.0. <b>A currency with no enabled rate can't be redeemed</b> (this is the gate). Rate is display-only otherwise (<span class="mono">credits_equivalent = balance × rate</span>).</p></div></div>
-      <div class="step"><span class="n">3</span><div><h3>(optional) Overdraft / customer-type override</h3><p><code>POST /credit-schemes/{id}/redemption-overrides</code> — a customer-type-specific rate + <span class="mono">overdraft_limit</span>. This is the <b>only</b> place overdraft is enabled; without it, balance can never go negative.</p></div></div>
-      <div class="step"><span class="n">4</span><div><h3>(optional) Display packages</h3><p><code>POST /credit-schemes/{id}/packages</code> — preset <span class="mono">quantity</span> + <span class="mono">display_name</span> tiles. Display presets only; they carry <b>no price</b>.</p></div></div>
-      <div class="step"><span class="n">5</span><div><h3>Mark which products accept it</h3><p>On a consuming product: <span class="mono">accept_prepaid_credit = true</span> (general settings) + add the scheme to its compatible-credit-schemes. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores both). Record as a finding, don't treat as a gate.</p></div></div>
-      <div class="step"><span class="n">6</span><div><h3>Publish</h3><p><code>POST /credit-schemes/{id}/publish</code> (draft → active). Only <span class="mono">draft</span> schemes can be deleted.</p></div></div>
-      <div class="step"><span class="n">7</span><div><h3>Grant / top up a balance</h3><p>No dedicated "buy credit" checkout. Two paths: <b>(a) manual</b> <code>POST /customers/{id}/prepaid-credits</code> — <span class="mono">product_id</span> (scheme) · <span class="mono">currency_id</span> · <span class="mono">amount</span> (money) · <span class="mono">source</span> grant|purchase|refund|bonus · <span class="mono">is_free</span> · <span class="mono">has_expiry</span>/<span class="mono">expires_at</span>. <b>(b) sale auto-grant</b> — a subscription/order line whose entitlement is the credit scheme AND carries an explicit <span class="mono">prepaid_grant_amount</span> grants on activation (lines without that money amount are skipped). Each grant creates a <b>lot</b> + a <span class="mono">grant</span> ledger row; view via <code>GET /customers/{id}/prepaid-credits</code>.</p></div></div>
-      <div class="step"><span class="n">8</span><div><h3>Redeem</h3><p><code>POST /customers/{id}/prepaid-credits/redeem</code> — <span class="mono">currency_id</span> · <span class="mono">amount</span> · <span class="mono">scheme_id</span> (required if the customer holds ≥2 schemes in that currency). <b>Burn order</b>: promotional (if <span class="mono">burn_free_credit_first</span>) → prepaid lots (free before paid, then fifo/lifo/fefo) → overdraft (only if an override set <span class="mono">overdraft_limit</span> &gt; 0; balance may go negative). <b>⚠ Redemption is a standalone ledger draw-down — it does NOT reduce an invoice/charge</b>; <span class="mono">reference_type</span>/<span class="mono">reference_id</span> are free-text links only.</p></div></div>
-      <div class="step"><span class="n">9</span><div><h3>Reverse (if needed)</h3><p><code>POST /prepaid-credits/redemptions/{groupId}/reverse</code> — restores every debited lot + promo allocation, writes <span class="mono">reverse</span> ledger rows. 404 if unknown, 422 if already reversed.</p></div></div>
+    <p class="lede" style="margin-top:0">Built entirely in the dashboard at <b>Product Catalog → Pre-paid Credits → Create</b>, then its
+      setup wizard. The <b>balance is real money, spent 1:1</b> — the redemption <b>rate</b> you set is a <b>gate + display only</b>,
+      not a currency conversion. Fill these values verbatim on the <b>Nimbus Credits</b> scheme.</p>
+    <div class="fillcard">
+      <p class="meta">Create form — <span class="mono">Pre-paid Credits → Create</span> (single slide-over)</p>
+      <table class="kv"><tbody>
+        <tr><td>Scheme Name</td><td><b>Nimbus Credits</b></td></tr>
+        <tr><td>Describe this scheme</td><td>Pre-paid wallet balance for API, SMS and usage-based features. <span class="note">(label says "optional" but the form requires it — flag)</span></td></tr>
+        <tr><td>Metric to describe a unit of value</td><td><b>Credits</b></td></tr>
+        <tr><td>Entitlement Packaging Method</td><td>Quantity</td></tr>
+        <tr><td>Credit Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
+        <tr><td>Burn Free/Promotional Credit before Paid Credit</td><td>ON</td></tr>
+        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
+      </tbody></table>
+    </div>
+    <div class="steps" style="margin-top:14px">
+      <div class="step"><span class="n">1</span><div><h3>Setup → Get Started (availability)</h3><p>Turn on <b>Global Availability &amp; localisation</b>, then enable all 5 countries (NG · US · UK · KE · DE).</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Setup → Redemption Model — one rate per currency</h3><p>"What is the value of one unit of this prepaid credit…?" Add a <b>Default Currency Redemption Rule</b> for each currency, all <b>1 : 1</b>, all <b>enabled</b>: <span class="mono">1 NGN = 1 Credit · 1 USD = 1 Credit · 1 GBP = 1 Credit · 1 KES = 1 Credit · 1 EUR = 1 Credit</span>. <b>A currency with no enabled rate can't be redeemed</b> — that's the gate.</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>Setup → Entitlement Packages (display tiles)</h3><p>Packaging = Quantity → add three: <b>1,000 Credits · 5,000 Credits · 10,000 Credits</b> (Display Name = the same text). Set <b>5,000</b> as default. Presets only — they carry no price.</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>Setup → (optional) Customer Type Overrides</h3><p>Add a customer-type-specific rate with an <b>overdraft limit</b> (e.g. Business customers, overdraft 5,000). This is the <b>only</b> place overdraft is enabled; without it a balance can never go negative.</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Publish (Summary → Finish)</h3><p>Draft → active. Only a draft scheme can be deleted.</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Mark which products accept it</h3><p>On a consuming product's general settings: turn on <b>Accept pre-paid credit</b> and add Nimbus Credits to its compatible schemes. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores both). Record as a finding, not a gate.</p></div></div>
+      <div class="step"><span class="n">7</span><div><h3>Grant a balance</h3><p>No "buy credit" checkout exists. Grant it: on <b>Amina Wanjiru</b> (customer #4) grant <b>KES 20,000</b>, source <em>grant</em>. Or it auto-grants when a sale line for this scheme carries an explicit grant amount. Confirm which grant surface the app exposes; if none, this is a coverage gap to flag.</p></div></div>
+      <div class="step"><span class="n">8</span><div><h3>Redeem</h3><p>Redeem <b>KES 5,000</b> against Amina. <b>Burn order</b>: promotional (since Burn-free-first is ON) → prepaid lots (free before paid, then FIFO) → overdraft (only if the override set a limit; balance may go negative). <b>⚠ Redemption is a standalone ledger draw-down — it does NOT reduce an invoice.</b></p></div></div>
+      <div class="step"><span class="n">9</span><div><h3>Reverse (if needed)</h3><p>Reverse the redemption group — restores every debited lot + promo allocation. Reversing the same group twice is rejected.</p></div></div>
     </div>
 
     <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Edge cases — tick each</p>
@@ -497,99 +518,191 @@
       <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC10</span> <span class="desc"><b>⚠ Redeem with acceptance OFF still succeeds</b> (acceptance config never checked at runtime) — finding</span></div></label>
       <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC11</span> <span class="desc"><b>⚠ Over-redeem beyond an invoice total isn't prevented</b> (no invoice awareness) — a double-redeem double-spends the balance — finding</span></div></label>
       <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC12</span> <span class="desc"><b>⚠ Runtime prepaid routes have no permission middleware</b> — check whether a non-privileged user can grant/redeem — authz finding</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC13</span> <span class="desc"><b>Reflection</b> — lots + transactions ledger show grant/consume/reverse; <code>GET …/prepaid-credits/balance</code> is correct per-currency &amp; per-scheme</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC13</span> <span class="desc"><b>Reflection</b> — the customer's credit balance panel shows grant / consume / reverse history and the correct remaining balance per currency &amp; per scheme</span></div></label>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Products &amp; plans <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— full build data</span></h3>
-    <p class="lede" style="margin-top:0">Two independent axes on every product: <b><span class="mono">product_type</span></b> = the commercial /
-      billing model (<span class="mono">standard_plan</span> / <span class="mono">team_plan</span> / <span class="mono">occurrence_plan</span> = recurring
-      subscription · <span class="mono">physical_product</span> = one-off good · <span class="mono">pre_paid_credit</span> · <span class="mono">reward_points</span>),
-      and <b><span class="mono">item_type</span></b> = what's delivered (<span class="mono">product</span> = tangible vs <span class="mono">service</span> =
-      intangible). So <b>Nimbus Starter = standard_plan + service</b> = a recurring subscription whose deliverable is
-      software (a service). A monthly snack box would be standard_plan + product; a hoodie is physical_product + product.</p>
-    <div class="grid two">
-      <div class="card">
-        <p class="meta">standard_plan · service · recurring</p>
-        <h3>Nimbus Starter</h3>
-        <ul>
-          <li><b>Type</b> <span class="mono">standard_plan</span> · <b>item_type</b> <span class="mono">service</span></li>
-          <li><b>Pricing scheme</b> "Main" · per-country · billing_type <span class="mono">recurring</span> · prepaid</li>
-          <li><b>Cycles / price</b> Monthly &amp; Annual — NGN 15,000 · USD 12 · GBP 10 · KES 1,500 · EUR 11 (annual ×10)</li>
-          <li><b>Trial</b> 14 days · after_trial · requires payment method</li>
-          <li><b>Features</b> 2FA, Storage 10GB, Email Notifications 100 (all included)</li>
-        </ul>
-      </div>
-      <div class="card">
-        <p class="meta">team_plan · service · recurring</p>
-        <h3>Nimbus Business</h3>
-        <ul>
-          <li><b>Type</b> <span class="mono">team_plan</span> · <b>item_type</b> <span class="mono">service</span></li>
-          <li><b>Base</b> NGN 40,000 / USD 40 per month</li>
-          <li><b>Licenses (per-seat)</b> Viewer (1 free, min 1) · Editor NGN 5,000/seat · Admin NGN 8,000/seat</li>
-          <li><b>Add-ons</b> Priority Support, Extra Storage 50GB</li>
-          <li><b>Features</b> SSO (fixed add), Storage (configurable), API Calls (metered)</li>
-        </ul>
-      </div>
-      <div class="card">
-        <p class="meta">physical_product · product · one-off</p>
-        <h3>Nimbus Hoodie</h3>
-        <ul>
-          <li><b>Type</b> <span class="mono">physical_product</span> · <b>item_type</b> <span class="mono">product</span></li>
-          <li><b>Billing</b> one_off · prepaid</li>
-          <li><b>Price</b> NGN 12,000 · USD 25 · GBP 20 · KES 3,000 · EUR 23</li>
-          <li><b>Pricing model</b> <span class="mono">volume</span> (10% off ≥ 5 units) — to exercise tiered/volume</li>
-        </ul>
-      </div>
-      <div class="card">
-        <p class="meta">the rest — build to the same shape</p>
-        <h3>Remaining SKUs</h3>
-        <div class="table-scroll" style="box-shadow:none;border:none">
-          <table style="min-width:0">
-            <tbody>
-              <tr><td><b>Nimbus Pro</b></td><td class="mono">standard_plan</td><td>metered + add-ons + ramp + configurable</td></tr>
-              <tr><td><b>Nimbus Events</b></td><td class="mono">occurrence_plan</td><td>occurrence-based (edge)</td></tr>
-              <tr><td><b>Implementation</b></td><td class="mono">service</td><td>one-off · installment plan</td></tr>
-              <tr><td><b>Training Session</b></td><td class="mono">service</td><td>one-off</td></tr>
-              <tr><td><b>Sticker Pack</b></td><td class="mono">product</td><td>one-off · low price</td></tr>
-              <tr><td><b>Nimbus Credits</b></td><td class="mono">pre_paid_credit</td><td>buy + redeem</td></tr>
-              <tr><td><b>Nimbus Rewards</b></td><td class="mono">reward_points</td><td>earn + redeem</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <h3 style="margin:28px 0 10px;font-size:16px">Reward points <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Nimbus Rewards · Settings → Reward Points → Create</span></h3>
+    <div class="fillcard">
+      <p class="meta">Create form (sibling of the credit scheme)</p>
+      <table class="kv"><tbody>
+        <tr><td>Name of Reward Point</td><td><b>Nimbus Rewards</b></td></tr>
+        <tr><td>Describe this Reward Point</td><td>Loyalty points earned on purchases, redeemable against invoices.</td></tr>
+        <tr><td>Currency Unit — Singular / Plural</td><td><b>Point</b> / <b>Points</b></td></tr>
+        <tr><td>Currency Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
+        <tr><td>Spend Promotional Points First</td><td>ON</td></tr>
+        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
+      </tbody></table>
+      <p class="note" style="margin:10px 0 0">Setup mirrors the credit scheme (availability · redemption rate per currency · packages). Set the same 1:1 rate per currency. Lower-traffic edge type — treat findings as discovery.</p>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Plans matrix <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— each a distinct config; build them all</span></h3>
+    <h3 style="margin:28px 0 10px;font-size:16px">Usage metrics <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— create these FIRST · metered features require one</span></h3>
+    <p class="lede" style="margin-top:0">A metered feature (allowance or consumption) needs a <b>Usage Metric</b> to exist before you can create it — the metric supplies the unit label. Create these four, then build the features.</p>
     <div class="table-scroll">
-      <table style="min-width:1120px">
-        <thead><tr><th>Plan</th><th class="mono">type</th><th class="mono">billing</th><th>Term</th><th class="mono">Countries</th><th class="mono">Pricing model</th><th class="mono">Scope</th><th>Extras to configure</th></tr></thead>
+      <table style="min-width:480px">
+        <thead><tr><th>Metric name</th><th class="mono">Unit</th><th>Used by</th></tr></thead>
         <tbody>
-          <tr><td>Nimbus Starter</td><td class="mono">standard_plan</td><td>Monthly + Annual</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">per-country</td><td>14-day trial · basic T&amp;C</td></tr>
-          <tr><td>Nimbus Pro</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">NG·US·UK</td><td class="mono">fixed</td><td class="mono">per-country</td><td>ramp 20%×3 · add-ons (incl. <b>alternate_pricing</b>) · cancellation cutoff</td></tr>
-          <tr><td>Nimbus Business</td><td class="mono">team_plan</td><td>Monthly + Annual</td><td>open</td><td class="mono">US·UK·DE</td><td class="mono">tiered</td><td class="mono">per-country</td><td>seat licenses · transfer + deposit fees</td></tr>
-          <tr><td>Nimbus Enterprise</td><td class="mono">team_plan</td><td>Annual</td><td><b>time-bound</b> · 12-mo commitment</td><td class="mono">US·UK·DE</td><td class="mono">tiered</td><td class="mono">per-country</td><td>min-term · renewal notice · termination period</td></tr>
-          <tr><td>Nimbus Events</td><td class="mono">occurrence_plan</td><td>per-occurrence</td><td><b>event-based</b></td><td class="mono">NG·KE</td><td class="mono">fixed</td><td class="mono">global</td><td>occurrence types + tickets + booking rules · <b>global price in NGN</b> (NG native; KE customers see the NGN price / conversion)</td></tr>
-          <tr><td>Nimbus Metered</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">US·DE</td><td class="mono">per_unit</td><td class="mono">global</td><td>API/SMS metered + overage · <b>global per-unit rate in USD</b> (DE customers billed off the USD rate)</td></tr>
-          <tr><td>Nimbus Global Lite</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">global</td><td>7-day trial · <b>single global price in USD</b> — sold across all 5 currencies → verify non-USD countries convert or are charged in USD</td></tr>
-          <tr><td>Nimbus Hybrid</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">all 5</td><td class="mono">fixed</td><td class="mono">global + overrides</td><td><b>USD global default</b> with per-country overrides for NG (₦) &amp; UK (£); the other 3 fall back to the USD global</td></tr>
-          <tr><td>Lagos Local</td><td class="mono">standard_plan</td><td>Monthly</td><td>open</td><td class="mono">NG only</td><td class="mono">fixed</td><td class="mono">per-country</td><td>offline bank transfer focus · NG VAT</td></tr>
-          <tr><td>Seasonal Campaign</td><td class="mono">standard_plan</td><td>Monthly</td><td><b>time-bound</b> · fixed 3-mo end</td><td class="mono">UK·DE</td><td class="mono">fixed</td><td class="mono">per-country</td><td>auto-expires (no renewal)</td></tr>
-          <tr><td>Nimbus Events+</td><td class="mono">standard_plan + occurrence_addon</td><td>Monthly</td><td>open</td><td class="mono">NG·KE</td><td class="mono">fixed</td><td class="mono">per-country</td><td>occurrence_addon attached to a host plan</td></tr>
+          <tr><td>Storage</td><td class="mono">GB</td><td>Cloud Storage</td></tr>
+          <tr><td>API Calls</td><td class="mono">calls</td><td>API Calls</td></tr>
+          <tr><td>SMS</td><td class="mono">messages</td><td>SMS Notifications</td></tr>
+          <tr><td>Support Hours</td><td class="mono">hours</td><td>Support Hours</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="lede" style="margin-top:10px"><b>Countries</b> = where the plan is <b>available</b> to sell/assign (its sell-to set) —
-      <span class="mono">all 5</span> = NG·US·UK·KE·DE. <b>Scope</b> = how price is set across those countries
-      (<span class="mono">global_pricing_enabled</span>): <b>per-country</b> = a distinct price + currency per country
-      (₦/$/£/KSh/€ rows); <b>global</b> = one single price row (<span class="mono">country_id = null</span>) reused everywhere;
-      <b>global + overrides</b> = a global default plus a few per-country rows — resolution is exact-country → global
-      fallback (the <span class="mono">pickBaseRow</span> chain), so the flag is binary but a hybrid works at the data level.
-      <b>Term</b>: open = renews indefinitely · time-bound = fixed <span class="mono">end_date</span> or initial commitment →
-      auto-expires at the renewal run. Every plan must be <b>published</b> (group E) before it can be sold.</p>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Features <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Features → Create · define once, map per plan</span></h3>
+    <p class="lede" style="margin-top:0">The <b>create form captures no price or availability</b> — only the feature's identity + type. You pick the
+      <b>Feature Type</b> on step 1 (radio cards: <span class="tok">Boolean</span> <span class="tok">Metered Allowance</span> <span class="tok">Metered Consumption</span>),
+      then details on step 2. <b>Entitlement Packaging</b> (Quantity / Range; "Dependent" is present but <b>disabled in the UI</b> — flag
+      it — so a dependent feature can't be created here). Package options and prices come later, in setup and in each plan's mapping.
+      Create all six below.</p>
+    <div class="grid two">
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Quantity</p>
+        <h3 style="margin:2px 0 8px">Cloud Storage</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type (step 1)</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Cloud Storage</b></td></tr>
+          <tr><td>Usage Metric</td><td>Storage (GB)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Entitlement Packages</b> (setup step): 50 GB · <b>100 GB (default)</b> · 250 GB · 500 GB · Unlimited.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Consumption · Quantity</p>
+        <h3 style="margin:2px 0 8px">API Calls</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+          <tr><td>Feature Name</td><td><b>API Calls</b></td></tr>
+          <tr><td>Usage Metric</td><td>API Calls (calls)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 10,000 · 50,000 · 100,000 · Unlimited.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Consumption · Quantity</p>
+        <h3 style="margin:2px 0 8px">SMS Notifications</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Consumption</td></tr>
+          <tr><td>Feature Name</td><td><b>SMS Notifications</b></td></tr>
+          <tr><td>Usage Metric</td><td>SMS (messages)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Packages</b>: 500 · 2,000 · 5,000.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Metered Allowance · Range</p>
+        <h3 style="margin:2px 0 8px">Support Hours</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Metered Allowance</td></tr>
+          <tr><td>Feature Name</td><td><b>Support Hours</b></td></tr>
+          <tr><td>Usage Metric</td><td>Support Hours (hours)</td></tr>
+          <tr><td>Entitlement Packaging</td><td>Range</td></tr>
+          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Range package</b>: Minimum 0 · Maximum 40 hours.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Boolean</p>
+        <h3 style="margin:2px 0 8px">Two-Factor Auth (2FA)</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Boolean</td></tr>
+          <tr><td>Feature Name</td><td><b>Two-Factor Auth</b></td></tr>
+          <tr><td>Describe this feature</td><td>Account 2FA / MFA security.</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0">No usage metric / packaging — Boolean has no inputs. On/off only, not extendable.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Boolean</p>
+        <h3 style="margin:2px 0 8px">Advanced Analytics</h3>
+        <table class="kv"><tbody>
+          <tr><td>Feature Type</td><td>Boolean</td></tr>
+          <tr><td>Feature Name</td><td><b>Advanced Analytics</b></td></tr>
+          <tr><td>Describe this feature</td><td>Usage dashboards + export.</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Edge to test</b>: "Dependent" packaging is disabled in the create UI — you can't build a feature gated on another. Flag it; treat Advanced Analytics as a plain Boolean for now.</p>
+      </div>
+    </div>
+
+    <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Feature → plan overview <span class="mono" style="color:var(--muted);font-weight:400;font-size:12px">— the detailed "Set Entitlements" values live in each plan card below</span></p>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Feature</th><th>Starter</th><th>Pro</th><th>Business (team)</th></tr></thead>
+        <tbody>
+          <tr><td>Cloud Storage</td><td>Fixed · 50 GB</td><td>Variable · 250 GB incl</td><td>Fixed · 500 GB</td></tr>
+          <tr><td>API Calls</td><td class="mono">—</td><td>Pay-for-what-you-use</td><td>Variable · 100,000 incl</td></tr>
+          <tr><td>SMS Notifications</td><td class="mono">—</td><td>Variable · 2,000 incl</td><td class="mono">—</td></tr>
+          <tr><td>Support Hours</td><td>Fixed · 5 hrs</td><td>Fixed · 20 hrs</td><td>Fixed · 40 hrs</td></tr>
+          <tr><td>Two-Factor Auth</td><td>On</td><td>On</td><td>On</td></tr>
+          <tr><td>Advanced Analytics</td><td class="mono">—</td><td>On</td><td>On</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin:8px 0 0"><b>Pricing schemes to create</b> (in the pricing step / Alternate Pricing, used by Variable &amp; PAYG mappings): <span class="mono">Storage — Per Unit</span> (Per Unit $0.10/GB) · <span class="mono">API Calls — Tiered</span> (Tiered: 0–50k $0.002 · 50k–200k $0.0015 · 200k+ $0.001 per call) · <span class="mono">SMS — Stair-Step</span> (Stair-Step: 0–1k $0.05 · 1k–5k $0.04 · 5k+ $0.03 per SMS) · <span class="mono">Extra Storage — Volume</span> (Volume, used by the add-on).</p>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Add-ons <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Add-ons → Create · build BEFORE plans (plans attach them)</span></h3>
+    <p class="lede" style="margin-top:0">Create the add-on (identity + billing method only), set its price in the add-on's own setup, then <b>attach it to a plan</b>
+      via the plan's <b>Other Settings → Add-ons → New Add-on</b> form. The three pricing "modes" surface at attach time:
+      the <b>Select Pricing Scheme</b> dropdown auto-picks the scheme whose name contains "main" (use-main-price) vs an
+      alternate scheme; <b>price ramp</b> is set in the add-on's recurring pricing.</p>
+    <div class="grid two">
+      <div class="fillcard">
+        <p class="meta">Standard Add-on · recurring · use main price</p>
+        <h3 style="margin:2px 0 8px">Priority Support</h3>
+        <table class="kv"><tbody>
+          <tr><td>Add-on Type (step 1)</td><td>Standard Add-on</td></tr>
+          <tr><td>Add-on Name</td><td><b>Priority Support</b></td></tr>
+          <tr><td>Select Billing Method</td><td>Recurring Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+          <tr><td>Price (Fixed, per month)</td><td class="mono">NG ₦15,000 · US $10 · UK £8 · KE KSh 1,300 · DE €9</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Attach to Pro &amp; Business</b>: Pricing Scheme = <em>Main</em> · Make Mandatory ON · Include with Plan Subscription Price ON · Quantity to include 1.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Standard Add-on · recurring · alternate scheme</p>
+        <h3 style="margin:2px 0 8px">Extra Storage 50GB</h3>
+        <table class="kv"><tbody>
+          <tr><td>Add-on Type</td><td>Standard Add-on</td></tr>
+          <tr><td>Add-on Name</td><td><b>Extra Storage 50GB</b></td></tr>
+          <tr><td>Select Billing Method</td><td>Recurring Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+          <tr><td>Price (Volume, per 50GB block/mo)</td><td class="mono">NG ₦12,000 · US $8 · UK £6.50 · KE KSh 1,050 · DE €7.50</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0">Create an alternate scheme first (<b>Alternate Pricing → New Pricing Scheme</b>, name <span class="mono">Extra Storage — Volume</span>). <b>Attach to Pro</b>: that scheme · Mandatory OFF · Include OFF.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Standard Add-on · one-time · price ramp</p>
+        <h3 style="margin:2px 0 8px">Onboarding Boost</h3>
+        <table class="kv"><tbody>
+          <tr><td>Add-on Type</td><td>Standard Add-on</td></tr>
+          <tr><td>Add-on Name</td><td><b>Onboarding Boost</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+          <tr><td>Price (Fixed, one-time)</td><td class="mono">NG ₦300,000 · US $199 · UK £160 · KE KSh 26,000 · DE €185</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Attach to Pro</b>: Mandatory OFF · Include OFF. (Price ramp lives on recurring add-ons; on this one-off, exercise the ramp on the Pro plan pricing instead.)</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Occurrence Add-on · edge</p>
+        <h3 style="margin:2px 0 8px">Event Fast-Track (optional)</h3>
+        <table class="kv"><tbody>
+          <tr><td>Add-on Type</td><td>Occurrence Add-on</td></tr>
+          <tr><td>Add-on Name</td><td><b>Event Fast-Track</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Price (Fixed)</td><td class="mono">US $20 · NG ₦30,000</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0">Only build if you're exercising occurrence flows — attach to Nimbus Events. Lower-traffic edge type.</p>
+      </div>
+    </div>
 
     <div class="grid two" style="margin-top:16px">
       <div class="card">
-        <p class="meta">Contract terms · attach to Pro / Business / Enterprise</p>
+        <p class="meta">Contract terms · attach to Pro / Business</p>
         <ul>
           <li><b>T&amp;C</b> one of: inline text · external URL · <span class="mono">terms_and_conditions_id</span> (from UMS library)</li>
           <li><b>Fees</b> (each global or per-country override, unique per country): transfer, deposit, late, cancellation, plan-switch, no-show, re-activation — e.g. transfer 2.5% / deposit NGN 5,000</li>
@@ -602,110 +715,237 @@
           <li><b>Inventory</b> set stock on physical products/services (Hoodie, Sticker, Training seats) — verify it <b>depletes on sale</b> and <b>blocks at zero</b>.</li>
           <li><b>Sell-to (country)</b> the plan's Countries column above is the availability set — a customer in an unlisted country can't buy it (hidden / 422).</li>
           <li><b>Sell-to (entity)</b> restrict a product to specific operating entities — only those entities can sell it.</li>
-          <li><b>Add-on compatibility</b> Priority Support &amp; Extra Storage → Starter/Pro/Business; Onboarding Boost → Business/Enterprise only. Only compatible add-ons should be offered per plan.</li>
+          <li><b>Add-on compatibility</b> Priority Support → Pro &amp; Business (mandatory); Extra Storage 50GB &amp; Onboarding Boost → Pro (optional). Only compatible add-ons should be offered per plan.</li>
         </ul>
       </div>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Features / entitlements <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— define once · map per plan · extend at runtime</span></h3>
-    <p class="lede" style="margin-top:0">A feature moves through three phases — keep them distinct when testing:
-      <b>1 · Creation</b> (define the entitlement and its mode), <b>2 · Mapping</b> (attach it to each plan with that
-      plan's included amount + country/period scope), <b>3 · Extension</b> (runtime — exhaustion &amp; top-ups).</p>
+    <h3 style="margin:28px 0 10px;font-size:16px">Standard plans <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Plans → Create new Plan → then setup wizard</span></h3>
+    <p class="lede" style="margin-top:0">Each plan = a short <b>create modal</b> (type + name + billing method) then a <b>setup wizard</b>:
+      <span class="mono">Get Started (availability)</span> → <span class="mono">Features &amp; Entitlements</span> →
+      <span class="mono">Set Pricing</span> → <span class="mono">Summary → Finish</span>. Publishing sends a <b>6-digit OTP</b> to the shared
+      inbox. Fill each card top-to-bottom. All standard plans: Global Availability ON + all 5 countries; annual = 10× monthly.</p>
 
-    <p style="font-weight:700;margin:22px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">1 ·</span> Creation — define the feature</p>
-    <p class="lede" style="margin-top:0">A feature's <b>mode</b> = <span class="mono">entitlement_type</span> × <span class="mono">feature_type</span> ×
-      <span class="mono">pricing_model</span> — build the full list below so plans can mix modes. Options
-      (<span class="mono">entitlement_options</span>, each with an <span class="mono">additional_fee</span>) make a feature configurable;
-      <span class="mono">depends_on</span> gates one feature on another; <b>time-based</b> features scope access/pricing to a window
-      (<span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>) or an occurrence anchor.</p>
-    <p class="lede" style="margin-top:0"><b>pricing_model</b> = how <em>this feature</em> is charged for extra capacity/enabling,
-      <em>separate from the plan fee</em>: <span class="mono">none</span> = included in the plan, no charge of its own
-      (get more via a configurable option, add-on, or higher plan — e.g. Storage's 10 GB is bundled; extra GB comes from the
-      10/50/100 option fee or the Extra-Storage add-on); <span class="mono">fixed</span> = a flat fee to enable it (SSO +₦2,000);
-      <span class="mono">pay_as_you_go</span> = per-unit over the allowance (API Calls +₦5/call); <span class="mono">tiered</span> = banded.
-      <b>reset</b> = when a metered counter refreshes each cycle (allowance ceiling re-set; consumption count zeroed) — boolean
-      on/off features never reset (<span class="mono">—</span>).</p>
+    <div class="fillcard">
+      <p class="meta">Standard Plan · recurring</p>
+      <h3 style="margin:2px 0 10px">Nimbus Starter</h3>
+      <table class="kv"><tbody>
+        <tr><td>Create → Plan Type</td><td>Standard Plan</td></tr>
+        <tr><td>Create → Plan Name</td><td><b>Nimbus Starter</b></td></tr>
+        <tr><td>Create → Select Billing Method</td><td>Recurring Billing</td></tr>
+        <tr><td>Create → Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>Setup 1 · Get Started</td><td>Global Availability &amp; localisation ON · enable all 5 countries</td></tr>
+        <tr><td>Setup 3 · Set Pricing → model</td><td>Fixed Price · Recurring Periods <b>Monthly + Annual</b></td></tr>
+        <tr><td>Setup 3 · Trial Period</td><td>ON · Duration 14 · Period Days · Collect first payment <b>After trial ends</b></td></tr>
+      </tbody></table>
+      <p class="subh">Setup 2 · Features &amp; Entitlements — "Set Entitlements" per feature</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
+          <tr><td>Cloud Storage</td><td>Fixed</td><td>50 GB</td><td>Switch Plan (→ Pro)</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
+          <tr><td>Support Hours</td><td>Fixed</td><td>5 hours</td><td class="mono">—</td></tr>
+        </tbody></table>
+      </div>
+      <p class="subh">Setup 3 · Prices per country (Monthly / Annual)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦45,000 / ₦450,000</td><td class="mono">$30 / $300</td><td class="mono">£24 / £240</td><td class="mono">KSh 3,900 / 39,000</td><td class="mono">€28 / €280</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="fillcard" style="margin-top:14px">
+      <p class="meta">Standard Plan · recurring · metered + add-ons + price ramp</p>
+      <h3 style="margin:2px 0 10px">Nimbus Pro</h3>
+      <table class="kv"><tbody>
+        <tr><td>Create → Plan Type / Name</td><td>Standard Plan · <b>Nimbus Pro</b></td></tr>
+        <tr><td>Create → Select Billing Method</td><td>Recurring Billing</td></tr>
+        <tr><td>Create → Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>Setup 1 · Get Started</td><td>Global Availability ON · all 5 countries</td></tr>
+        <tr><td>Setup 3 · model + ramp</td><td>Fixed Price · Monthly + Annual · <b>Price Ramp</b> Discount 50% · Duration 3 · Unit Months</td></tr>
+        <tr><td>Setup 3 · Trial Period</td><td>ON · 14 Days · collect after trial</td></tr>
+        <tr><td>Add-ons (Other Settings)</td><td><b>Priority Support</b> (Mandatory, Include ON, Qty 1) · <b>Extra Storage 50GB</b> (optional) · <b>Onboarding Boost</b> (optional)</td></tr>
+      </tbody></table>
+      <p class="subh">Setup 2 · Features &amp; Entitlements — "Set Entitlements" per feature</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Feature</th><th>Entitlement Mode</th><th>Config</th><th>Extension Rule</th></tr></thead><tbody>
+          <tr><td>Cloud Storage</td><td>Variable</td><td>Included 250 GB · additional options 500 GB + Unlimited · scheme <span class="mono">Storage — Per Unit</span></td><td>User can extend · bill End of cycle · Max 2,000 GB</td></tr>
+          <tr><td>API Calls</td><td>Pay for what you use</td><td>scheme <span class="mono">API Calls — Tiered</span> · Billing Frequency Recurring · Min committed 10,000 · Max 1,000,000</td><td>Pay as you go</td></tr>
+          <tr><td>SMS Notifications</td><td>Variable</td><td>Included 2,000 · additional option 5,000 · scheme <span class="mono">SMS — Stair-Step</span></td><td>User can extend · bill After extension</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
+          <tr><td>Advanced Analytics</td><td>Fixed (Boolean)</td><td>Access enabled</td><td class="mono">—</td></tr>
+          <tr><td>Support Hours</td><td>Fixed</td><td>20 hours</td><td class="mono">—</td></tr>
+        </tbody></table>
+      </div>
+      <p class="subh">Setup 2 · Time-based access (for the F scenarios) — on API Calls</p>
+      <p class="note" style="margin:0 0 10px">"When do you want to allow access?" = <b>For a recurring calendar schedule during the billing cycle</b> · Recurrence Weekly · Mon–Fri · 09:00–17:00 · Add-on behavior <b>Extend Entitlement</b>.</p>
+      <p class="subh">Setup 3 · Prices per country (Monthly / Annual · before ramp)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦120,000 / ₦1,200,000</td><td class="mono">$80 / $800</td><td class="mono">£64 / £640</td><td class="mono">KSh 10,400 / 104,000</td><td class="mono">€74 / €740</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Team plan <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— seats = attached Standard Plans · build those seat plans FIRST</span></h3>
+    <p class="lede" style="margin-top:0">A team plan's "licenses" are <b>existing Standard Plans attached as seat types</b> — there's no per-seat price
+      field on the team plan; each seat's price is <b>inherited from its own Standard Plan's recurring pricing</b>. So build the
+      three seat plans below as ordinary Standard Plans first, then attach them. The team plan itself allows only
+      <b>Fixed</b> or <b>Dynamic</b> pricing (its base platform fee).</p>
+    <div class="fillcard">
+      <p class="meta">Seat-license Standard Plans — create these first (per-seat price / month)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:560px"><thead><tr><th>Seat plan</th><th class="mono">NG</th><th class="mono">US</th><th class="mono">UK</th><th class="mono">KE</th><th class="mono">DE</th></tr></thead><tbody>
+          <tr><td>Viewer Seat</td><td class="mono">₦7,500</td><td class="mono">$5</td><td class="mono">£4</td><td class="mono">KSh 650</td><td class="mono">€5</td></tr>
+          <tr><td>Editor Seat</td><td class="mono">₦22,500</td><td class="mono">$15</td><td class="mono">£12</td><td class="mono">KSh 1,950</td><td class="mono">€14</td></tr>
+          <tr><td>Admin Seat</td><td class="mono">₦37,500</td><td class="mono">$25</td><td class="mono">£20</td><td class="mono">KSh 3,250</td><td class="mono">€23</td></tr>
+        </tbody></table>
+      </div>
+      <p class="note" style="margin:8px 0 0">Each = Standard Plan · Recurring · Fixed · Monthly + Annual · all 5 countries. Give Viewer read-only, Editor edit, Admin full (a name marker is enough — features are inherited by the seat).</p>
+    </div>
+
+    <div class="fillcard" style="margin-top:14px">
+      <p class="meta">Team Plan · recurring</p>
+      <h3 style="margin:2px 0 10px">Nimbus Business</h3>
+      <table class="kv"><tbody>
+        <tr><td>Create → Plan Type / Name</td><td>Team Plan · <b>Nimbus Business</b></td></tr>
+        <tr><td>Create → Select Billing Method</td><td>Recurring Billing</td></tr>
+        <tr><td>Create → Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>Setup 1 · Get Started</td><td>Global Availability ON · all 5 countries</td></tr>
+        <tr><td>Setup 3 · Standard Plans (seats)</td><td>attach <b>Viewer / Editor / Admin Seat</b> · per seat: Default Seats 5 · Minimum Seats 1 · Allow Unlimited OFF</td></tr>
+        <tr><td>Setup 4 · Set Pricing (base fee)</td><td>Fixed Price · Monthly + Annual</td></tr>
+        <tr><td>Add-ons</td><td>Priority Support (Mandatory · Include ON · Qty 1)</td></tr>
+      </tbody></table>
+      <p class="subh">Setup 2 · Features &amp; Entitlements</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th>Feature</th><th>Mode</th><th>Value</th><th>Extension Rule</th></tr></thead><tbody>
+          <tr><td>Cloud Storage</td><td>Fixed</td><td>500 GB</td><td>Buy Add-on (Extra Storage 50GB)</td></tr>
+          <tr><td>API Calls</td><td>Variable</td><td>Included 100,000 · scheme <span class="mono">API Calls — Tiered</span></td><td>Auto extend entitlement</td></tr>
+          <tr><td>Two-Factor Auth</td><td>Fixed (Boolean)</td><td>Enabled</td><td class="mono">—</td></tr>
+          <tr><td>Advanced Analytics</td><td>Fixed (Boolean)</td><td>Enabled</td><td class="mono">—</td></tr>
+          <tr><td>Support Hours</td><td>Fixed</td><td>40 hours</td><td class="mono">—</td></tr>
+        </tbody></table>
+      </div>
+      <p class="subh">Setup 4 · Base-fee price per country (Monthly / Annual)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦225,000 / ₦2,250,000</td><td class="mono">$150 / $1,500</td><td class="mono">£120 / £1,200</td><td class="mono">KSh 19,500 / 195,000</td><td class="mono">€138 / €1,380</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="fillcard" style="margin-top:14px">
+      <p class="meta">Occurrence Plan · edge type · lower fidelity</p>
+      <h3 style="margin:2px 0 10px">Nimbus Events</h3>
+      <table class="kv"><tbody>
+        <tr><td>Create → Plan Type / Name</td><td>Occurrence Plan · <b>Nimbus Events</b></td></tr>
+        <tr><td>Create → Select Billing Method</td><td>One-time Billing <span class="note">(occurrence allows only One-time / Free)</span></td></tr>
+        <tr><td>Availability</td><td>Nigeria · Kenya</td></tr>
+        <tr><td>Price (Fixed, per event)</td><td class="mono">NG ₦75,000 · US $50 · UK £40 · KE KSh 6,500 · DE €46</td></tr>
+      </tbody></table>
+      <p class="note" style="margin:8px 0 0"><b>Edge to test</b>: occurrence_plan has no full setup-wizard config in the app — build what the UI exposes and <b>treat every gap/oddity as a discovery finding</b>, not a blocker.</p>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Extension rules <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— set per plan-feature in "Entitlement Extension Settings"</span></h3>
+    <p class="lede" style="margin-top:0">Each mapped feature has an <b>Extension Rule</b> — what happens when a subscriber exhausts the allowance. The six
+      options are spread across the plans above so every one gets exercised (scenarios <span class="mono">F2–F8</span>). The
+      <b>Maximum allowable total quantity</b> toggle is the hard ceiling; leaving it off + choosing an overage rule is the "overage" path.</p>
     <div class="table-scroll">
-      <table style="min-width:900px">
-        <thead><tr><th>Feature</th><th class="mono">entitlement_type</th><th class="mono">feature_type</th><th class="mono">pricing_model</th><th class="mono">reset</th><th>Behaviour to verify</th></tr></thead>
+      <table style="min-width:640px">
+        <thead><tr><th>Extension Rule (dropdown label)</th><th>Exercised on</th><th>Key sub-fields</th></tr></thead>
         <tbody>
-          <tr><td>2FA</td><td class="mono">switch</td><td class="mono">boolean</td><td class="mono">none</td><td class="mono">—</td><td>included on/off · <b>not extendable</b></td></tr>
-          <tr><td>SSO (SAML/OIDC)</td><td class="mono">switch</td><td class="mono">boolean</td><td class="mono">fixed</td><td class="mono">—</td><td>+NGN 2,000/mo toggle · not included by default</td></tr>
-          <tr><td>Storage</td><td class="mono">quantity</td><td class="mono">metered_allowance</td><td class="mono">none</td><td class="mono">monthly</td><td>10GB incl · options 10/50/100 (+fee) · extend via buy-extra (fixed)</td></tr>
-          <tr><td>Projects</td><td class="mono">quantity</td><td class="mono">metered_allowance</td><td class="mono">fixed</td><td class="mono">monthly</td><td>5 incl · +NGN 1,000 each additional</td></tr>
-          <tr><td>Bandwidth</td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">monthly</td><td>banded tiers · extend = tier upgrade (extend-feature)</td></tr>
-          <tr><td>Support Hours</td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">monthly</td><td>Basic / Priority / Dedicated band</td></tr>
-          <tr><td>Advanced Analytics</td><td class="mono">dependent</td><td class="mono">boolean</td><td class="mono">fixed</td><td class="mono">—</td><td>requires Pro tier (depends_on) · +NGN 3,000/mo</td></tr>
-          <tr><td>Webhooks</td><td class="mono">dependent</td><td class="mono">metered_allowance</td><td class="mono">fixed</td><td class="mono">monthly</td><td>depends on API Calls · quota only when parent enabled</td></tr>
-          <tr><td>API Calls</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">pay_as_you_go</td><td class="mono">monthly</td><td>1,000 incl · <b>overage</b> NGN 5/call → UnbilledCharge on renewal</td></tr>
-          <tr><td>SMS Credits</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">tiered</td><td class="mono">monthly</td><td>tiered overage pricing</td></tr>
-          <tr><td>Email Sends</td><td class="mono">quantity</td><td class="mono">metered_consumption</td><td class="mono">none</td><td class="mono">monthly</td><td>max cap · <b>no overage → hard block</b> at the limit</td></tr>
-          <tr><td>Peak-Hours Access <span class="mono" style="color:var(--muted)">(time-based)</span></td><td class="mono">range</td><td class="mono">metered_allowance</td><td class="mono">tiered</td><td class="mono">per window</td><td><b>time-boxed</b> access + peak/off-peak rate via <span class="mono">time_based_access_config</span> / <span class="mono">time_based_pricing_config</span>; can be occurrence/booking-anchored</td></tr>
+          <tr><td>Switch Plan</td><td>Starter · Cloud Storage</td><td>no extra fields — prompts upgrade to Pro</td></tr>
+          <tr><td>User can extend entitlement</td><td>Pro · Cloud Storage &amp; SMS</td><td>additional options/range · When to bill (End of cycle / After extension) · Max allowable</td></tr>
+          <tr><td>Pay as you go</td><td>Pro · API Calls</td><td>pricing scheme · Billing Frequency · Max allowable</td></tr>
+          <tr><td>Buy Add-on</td><td>Business · Cloud Storage</td><td>Select Add-on (Extra Storage 50GB) + its pricing scheme · Retain until cancel</td></tr>
+          <tr><td>Auto extend entitlement</td><td>Business · API Calls</td><td>quantity to auto-extend to · When to bill</td></tr>
+          <tr><td>Auto Extend with Add-on</td><td>variant run — set on Pro · SMS</td><td>Select Add-on + scheme · Retain until cancel</td></tr>
         </tbody>
       </table>
     </div>
 
-    <p style="font-weight:700;margin:26px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">2 ·</span> Mapping — attach features to plans</p>
-    <p class="lede" style="margin-top:0">A feature is created once, then <b>mapped onto each plan</b> with that plan's own <b>included amount</b>,
-      enabled/disabled (<span class="mono">is_enabled</span>), and scoped <b>per country and/or per billing period</b>
-      (<span class="mono">plan_feature_country_entitlements</span> / <span class="mono">…_country_period</span> / <span class="mono">…_global_period</span>;
-      <span class="mono">global_entitlement_enabled</span>, <span class="mono">set_by_recurring_period</span>). The same feature is included
-      differently per plan — build this matrix so mapping is exercised, not just creation. (<span class="mono">—</span> = not on that plan.)</p>
-    <div class="table-scroll">
-      <table style="min-width:760px">
-        <thead><tr><th>Feature</th><th>Starter</th><th>Pro</th><th>Business</th><th>Enterprise</th></tr></thead>
-        <tbody>
-          <tr><td>2FA</td><td>on</td><td>on</td><td>on</td><td>on</td></tr>
-          <tr><td>SSO</td><td class="mono">—</td><td>+fee</td><td>on</td><td>on</td></tr>
-          <tr><td>Storage</td><td>10 GB</td><td>10/50/100 (option)</td><td>100 GB</td><td>500 GB</td></tr>
-          <tr><td>Projects</td><td>5</td><td>20</td><td>100</td><td>unlimited</td></tr>
-          <tr><td>Bandwidth</td><td class="mono">—</td><td class="mono">—</td><td>tier 2</td><td>tier 3</td></tr>
-          <tr><td>Support Hours</td><td class="mono">—</td><td class="mono">—</td><td>Priority</td><td>Dedicated</td></tr>
-          <tr><td>Advanced Analytics</td><td class="mono">—</td><td>+fee</td><td>on</td><td>on</td></tr>
-          <tr><td>Webhooks</td><td class="mono">—</td><td class="mono">—</td><td>on</td><td>on</td></tr>
-          <tr><td>API Calls</td><td class="mono">—</td><td>1,000</td><td>10,000</td><td>100,000</td></tr>
-          <tr><td>SMS Credits</td><td class="mono">—</td><td class="mono">—</td><td>5,000</td><td>20,000</td></tr>
-          <tr><td>Email Sends</td><td>100</td><td>1,000</td><td>10,000</td><td>50,000</td></tr>
-          <tr><td>Peak-Hours Access</td><td class="mono">—</td><td class="mono">—</td><td class="mono">—</td><td>on</td></tr>
-        </tbody>
-      </table>
+    <h3 style="margin:28px 0 10px;font-size:16px">One-off products &amp; services <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Products &amp; Services → Create</span></h3>
+    <p class="lede" style="margin-top:0">Step 1 picks <b>Product</b> (tangible — inventory + shipping) or <b>Service</b> (intangible). Price + inventory + installments
+      are all in the setup flow, not the create form. Prices are per country (set on each country row).</p>
+    <div class="grid two">
+      <div class="fillcard">
+        <p class="meta">Product · one-time · Volume pricing</p>
+        <h3 style="margin:2px 0 8px">Nimbus Hoodie</h3>
+        <table class="kv"><tbody>
+          <tr><td>Type (step 1)</td><td>Product</td></tr>
+          <tr><td>Name</td><td><b>Nimbus Hoodie</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Physical Goods</td></tr>
+          <tr><td>Pricing model</td><td>Volume (10% off ≥ 5 units)</td></tr>
+          <tr><td>Price</td><td class="mono">NG ₦68,000 · US $45 · UK £36 · KE KSh 5,900 · DE €42</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Inventory → Add batch</b> per country: Add Quantity 100 · Batch Reference <span class="mono">BATCH-HOODIE-&lt;CC&gt;-001</span>. Verify stock depletes on sale and blocks at zero.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Product · one-time · Fixed · low price</p>
+        <h3 style="margin:2px 0 8px">Sticker Pack</h3>
+        <table class="kv"><tbody>
+          <tr><td>Type</td><td>Product</td></tr>
+          <tr><td>Name</td><td><b>Sticker Pack</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Physical Goods</td></tr>
+          <tr><td>Pricing model</td><td>Fixed</td></tr>
+          <tr><td>Price</td><td class="mono">NG ₦12,000 · US $8 · UK £6.50 · KE KSh 1,050 · DE €7.50</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Inventory</b>: Add Quantity 500 · Batch <span class="mono">BATCH-STICKER-&lt;CC&gt;-001</span>.</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Service · one-time · Fixed · installment</p>
+        <h3 style="margin:2px 0 8px">Implementation &amp; Migration</h3>
+        <table class="kv"><tbody>
+          <tr><td>Type</td><td>Service</td></tr>
+          <tr><td>Name</td><td><b>Implementation &amp; Migration</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+          <tr><td>Pricing model</td><td>Fixed (high value)</td></tr>
+          <tr><td>Price</td><td class="mono">NG ₦3,750,000 · US $2,500 · UK £2,000 · KE KSh 325,000 · DE €2,300</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0"><b>Installment</b>: create a 3-instalment plan under the country's Billing Settings, then attach it to this pricing scheme (Pricing → Add Instalment Plan).</p>
+      </div>
+      <div class="fillcard">
+        <p class="meta">Service · one-time · Dynamic pricing</p>
+        <h3 style="margin:2px 0 8px">Training Session</h3>
+        <table class="kv"><tbody>
+          <tr><td>Type</td><td>Service</td></tr>
+          <tr><td>Name</td><td><b>Training Session</b></td></tr>
+          <tr><td>Select Billing Method</td><td>One-time Billing</td></tr>
+          <tr><td>Product Tax Category</td><td>Professional Services</td></tr>
+          <tr><td>Pricing model</td><td>Dynamic → "Allow user to set amount to pay"</td></tr>
+          <tr><td>Minimum payable</td><td class="mono">NG ₦150,000 · US $100 · UK £80 · KE KSh 13,000 · DE €92</td></tr>
+          <tr><td>Suggested amounts</td><td class="mono">$150 · $300 (+ local equivalents)</td></tr>
+        </tbody></table>
+        <p class="note" style="margin:8px 0 0">Exercises the user-defined dynamic pricing path at checkout.</p>
+      </div>
     </div>
 
-    <p style="font-weight:700;margin:26px 0 8px;font-size:14px"><span class="mono" style="color:var(--accent-ink)">3 ·</span> Extension — top up / change at runtime</p>
-    <p class="lede" style="margin-top:0"><b>Exhaustion</b>: a <span class="mono">metered_consumption</span> feature with overage pricing accrues an
-      <span class="mono">UnbilledCharge</span> past its allowance (folded into the next renewal invoice); one with a max cap and
-      no overage is a <b>hard block</b>. Allowances <b>reset</b> each <span class="mono">renewal_cycle</span>.
-      <b>buy-extra-feature</b> adds a new feature/quantity mid-cycle (PAYG or fixed); <b>extend-feature</b> upgrades an
-      existing tier (boolean/tier-less rejected); <b>dependent</b> features unlock only when their parent is enabled.
-      These runtime paths are exercised by scenarios <span class="mono">F2–F8</span>.</p>
-
-    <h3 style="margin:28px 0 10px;font-size:16px">Add-ons &amp; discounts</h3>
+    <h3 style="margin:28px 0 10px;font-size:16px">Discounts <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— manual only this run</span></h3>
     <div class="grid two">
       <div class="card">
-        <p class="meta">Add-ons · pricing_mode</p>
-        <div class="table-scroll" style="box-shadow:none;border:none">
-          <table style="min-width:0">
-            <tbody>
-              <tr><td><b>Priority Support</b></td><td class="mono">use_main_price</td><td>NGN 5,000/mo · include_with_subscription</td></tr>
-              <tr><td><b>Extra Storage 50GB</b></td><td class="mono">alternate_pricing_scheme</td><td>NGN 2,500/mo</td></tr>
-              <tr><td><b>Onboarding Boost</b></td><td class="mono">price_ramp</td><td>NGN 10,000 one-off</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <p class="meta">Discounts — manual only this run</p>
+        <p class="meta">Apply at sell time — offer settings</p>
         <div class="table-scroll" style="box-shadow:none;border:none">
           <table style="min-width:0">
             <tbody>
               <tr><td>Manual %</td><td>15% off (offer settings)</td></tr>
-              <tr><td>Manual fixed</td><td>NGN 2,000 off (offer settings)</td></tr>
-              <tr><td>Price ramp</td><td>20% off first 3 periods (intro ramp)</td></tr>
+              <tr><td>Manual fixed</td><td>₦2,000 / $2 off (offer settings)</td></tr>
+              <tr><td>Price ramp</td><td>Nimbus Pro's 50% × 3 months intro ramp</td></tr>
               <tr><td class="mono" style="color:var(--muted)">coupons</td><td>deferred → later run</td></tr>
               <tr><td class="mono" style="color:var(--muted)">cashback</td><td>deferred → later run</td></tr>
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="card">
+        <p class="meta">Build order recap</p>
+        <ul style="margin:0">
+          <li>Usage metrics → features → add-ons → reward points → <b>seat plans</b> → standard plans → team plan → occurrence → one-off products.</li>
+          <li>Nothing has a price until its <b>setup wizard</b>; publish needs the OTP from the shared inbox.</li>
+          <li>Use these exact names, prices &amp; emails everywhere so reflection (group D) lines up.</li>
+        </ul>
       </div>
     </div>
   </section>

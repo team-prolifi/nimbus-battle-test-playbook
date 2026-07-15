@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nimbus Battle-Test Playbook</title>
 <title>Nimbus Battle-Test Playbook</title>
 <style>
   :root {
@@ -464,6 +465,39 @@
           <tr><td class="mono">10</td><td>Nordwind GmbH</td><td class="mono">company</td><td class="mono">prolifitest+nordwind@gmail.com · +49 89 5557 0233</td><td class="mono">DE · EUR</td><td class="mono">VAT DE987654321</td><td>Maximilianstraße 35, München, 80539</td><td>EU VAT B2B · assign-plan send-link → company pays · add-to-next-bill</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Pre-paid credit <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— build &amp; test walkthrough · catalog step 1</span></h3>
+    <p class="lede" style="margin-top:0">A pre-paid credit scheme is just a <b>Product</b> with <span class="mono">product_type = pre_paid_credit</span>. The
+      <b>balance is real money, spent 1:1</b> — the "rate" you configure is a <b>gate/display only</b>, not a currency conversion.
+      Build it in this order; do all the setup on the <b>Nimbus Credits</b> scheme.</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div><h3>Create the scheme</h3><p><code>POST /credit-schemes</code> — <span class="mono">name</span> "Nimbus Credits" · <span class="mono">entitlement_packaging</span> quantity · metric labels credit/credits · <span class="mono">product_type</span> pre_paid_credit · <span class="mono">credit_consumption_rule</span> fifo · <span class="mono">burn_free_credit_first</span> true · <span class="mono">status</span> draft. Note: creation does <b>not</b> capture amount/rate/currency/expiry — those come next.</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Set a redemption rate per currency</h3><p><code>POST /credit-schemes/{id}/redemption-rates</code> — one per currency you'll redeem in (NGN, USD…), <span class="mono">rate</span> 1.0. <b>A currency with no enabled rate can't be redeemed</b> (this is the gate). Rate is display-only otherwise (<span class="mono">credits_equivalent = balance × rate</span>).</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>(optional) Overdraft / customer-type override</h3><p><code>POST /credit-schemes/{id}/redemption-overrides</code> — a customer-type-specific rate + <span class="mono">overdraft_limit</span>. This is the <b>only</b> place overdraft is enabled; without it, balance can never go negative.</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>(optional) Display packages</h3><p><code>POST /credit-schemes/{id}/packages</code> — preset <span class="mono">quantity</span> + <span class="mono">display_name</span> tiles. Display presets only; they carry <b>no price</b>.</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Mark which products accept it</h3><p>On a consuming product: <span class="mono">accept_prepaid_credit = true</span> (general settings) + add the scheme to its compatible-credit-schemes. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores both). Record as a finding, don't treat as a gate.</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Publish</h3><p><code>POST /credit-schemes/{id}/publish</code> (draft → active). Only <span class="mono">draft</span> schemes can be deleted.</p></div></div>
+      <div class="step"><span class="n">7</span><div><h3>Grant / top up a balance</h3><p>No dedicated "buy credit" checkout. Two paths: <b>(a) manual</b> <code>POST /customers/{id}/prepaid-credits</code> — <span class="mono">product_id</span> (scheme) · <span class="mono">currency_id</span> · <span class="mono">amount</span> (money) · <span class="mono">source</span> grant|purchase|refund|bonus · <span class="mono">is_free</span> · <span class="mono">has_expiry</span>/<span class="mono">expires_at</span>. <b>(b) sale auto-grant</b> — a subscription/order line whose entitlement is the credit scheme AND carries an explicit <span class="mono">prepaid_grant_amount</span> grants on activation (lines without that money amount are skipped). Each grant creates a <b>lot</b> + a <span class="mono">grant</span> ledger row; view via <code>GET /customers/{id}/prepaid-credits</code>.</p></div></div>
+      <div class="step"><span class="n">8</span><div><h3>Redeem</h3><p><code>POST /customers/{id}/prepaid-credits/redeem</code> — <span class="mono">currency_id</span> · <span class="mono">amount</span> · <span class="mono">scheme_id</span> (required if the customer holds ≥2 schemes in that currency). <b>Burn order</b>: promotional (if <span class="mono">burn_free_credit_first</span>) → prepaid lots (free before paid, then fifo/lifo/fefo) → overdraft (only if an override set <span class="mono">overdraft_limit</span> &gt; 0; balance may go negative). <b>⚠ Redemption is a standalone ledger draw-down — it does NOT reduce an invoice/charge</b>; <span class="mono">reference_type</span>/<span class="mono">reference_id</span> are free-text links only.</p></div></div>
+      <div class="step"><span class="n">9</span><div><h3>Reverse (if needed)</h3><p><code>POST /prepaid-credits/redemptions/{groupId}/reverse</code> — restores every debited lot + promo allocation, writes <span class="mono">reverse</span> ledger rows. 404 if unknown, 422 if already reversed.</p></div></div>
+    </div>
+
+    <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Edge cases — tick each</p>
+    <div class="checks" data-group="PPC">
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC1</span> <span class="desc"><b>Expired lot still redeemable</b> — a lot past <span class="mono">expires_at</span> whose status is still <span class="mono">active</span> can be spent (nothing flips it to expired). <b>Flag as a likely bug.</b></span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC2</span> <span class="desc"><b>Insufficient balance → 422 + full rollback</b> (no partial spend of the requested amount)</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC3</span> <span class="desc"><b>Currency mismatch</b> — USD lots can't cover an NGN redeem; single-currency, no conversion</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC4</span> <span class="desc"><b>Two schemes, same currency, no <span class="mono">scheme_id</span> → 422</b> "specify scheme_id"</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC5</span> <span class="desc"><b>Burn order</b> — free-before-paid when <span class="mono">burn_free_credit_first</span>; then fifo/lifo/fefo per <span class="mono">credit_consumption_rule</span></span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC6</span> <span class="desc"><b>Overdraft</b> — balance goes negative only when an override sets <span class="mono">overdraft_limit</span> &gt; 0</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC7</span> <span class="desc"><b>Rate disabled after a balance exists</b> — balance becomes non-redeemable (gate) but still shows in the summary</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC8</span> <span class="desc"><b>Grant amount ≤ 0</b> — manual rejected (amount &gt; 0 required); sale line without <span class="mono">prepaid_grant_amount</span> silently skipped</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC9</span> <span class="desc"><b>Reverse</b> restores lots + ledger; reversing the same group twice → 422</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC10</span> <span class="desc"><b>⚠ Redeem with acceptance OFF still succeeds</b> (acceptance config never checked at runtime) — finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC11</span> <span class="desc"><b>⚠ Over-redeem beyond an invoice total isn't prevented</b> (no invoice awareness) — a double-redeem double-spends the balance — finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC12</span> <span class="desc"><b>⚠ Runtime prepaid routes have no permission middleware</b> — check whether a non-privileged user can grant/redeem — authz finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC13</span> <span class="desc"><b>Reflection</b> — lots + transactions ledger show grant/consume/reverse; <code>GET …/prepaid-credits/balance</code> is correct per-currency &amp; per-scheme</span></div></label>
     </div>
 
     <h3 style="margin:28px 0 10px;font-size:16px">Products &amp; plans <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— full build data</span></h3>
@@ -938,5 +972,6 @@
     render();
   })();
 </script>
+
 </body>
 </html>

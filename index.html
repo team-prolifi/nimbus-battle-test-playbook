@@ -303,10 +303,13 @@
   <section id="catalog">
     <div class="sec-head"><span class="sec-num">03</span><h2>Catalog to build</h2><p>every real product / feature / pricing type</p></div>
     <p class="lede" style="margin-top:0"><b>Build in dependency order</b> — later artefacts reference earlier ones:
-      <span class="mono">1</span> pre-paid credit → <span class="mono">2</span> features → <span class="mono">3</span> add-ons →
-      <span class="mono">4</span> standard plans → <span class="mono">5</span> team plans → <span class="mono">6</span> one-off products / services.
-      Credit schemes underpin prepaid/consumption features; features &amp; add-ons must exist before a plan can map them;
-      team plans reference standard-plan licenses, so standard plans come first.</p>
+      <span class="mono">1</span> usage metering (event types) → <span class="mono">2</span> event metrics →
+      <span class="mono">3</span> features → <span class="mono">4</span> add-ons → <span class="mono">5</span> pre-paid credit →
+      <span class="mono">6</span> reward points → <span class="mono">7</span> seat-license plans → <span class="mono">8</span> standard plans →
+      <span class="mono">9</span> team plan → <span class="mono">10</span> occurrence plan → <span class="mono">11</span> one-off products / services.
+      Metrics need an event type; a metered <b>feature binds to a metric</b>, so metering comes first; features &amp; add-ons must exist
+      before a plan can map/attach them; a plan's PAYG entitlement can draw on a credit scheme; team plans reference standard-plan
+      (seat) licenses, so those come first.</p>
     <div class="grid two">
       <div class="card">
         <p class="meta">Plans · recurring</p>
@@ -476,69 +479,6 @@
       </table>
     </div>
 
-    <h3 style="margin:28px 0 10px;font-size:16px">Pre-paid credit <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— build &amp; test walkthrough · catalog step 1</span></h3>
-    <p class="lede" style="margin-top:0">Built entirely in the dashboard at <b>Product Catalog → Pre-paid Credits → Create</b>, then its
-      setup wizard. The <b>balance is real money, spent 1:1</b> — the redemption <b>rate</b> you set is a <b>gate + display only</b>,
-      not a currency conversion. Fill these values verbatim on the <b>Nimbus Credits</b> scheme.</p>
-    <div class="fillcard">
-      <p class="meta">Create form — <span class="mono">Pre-paid Credits → Create</span> (single slide-over)</p>
-      <table class="kv"><tbody>
-        <tr><td>Scheme Name</td><td><b>Nimbus Credits</b></td></tr>
-        <tr><td>Describe this scheme</td><td>Pre-paid wallet balance for API, SMS and usage-based features. <span class="note">(label says "optional" but the form requires it — flag)</span></td></tr>
-        <tr><td>Metric to describe a unit of value</td><td><b>Credits</b></td></tr>
-        <tr><td>Entitlement Packaging Method</td><td>Quantity</td></tr>
-        <tr><td>Credit Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
-        <tr><td>Burn Free/Promotional Credit before Paid Credit</td><td>ON</td></tr>
-        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
-      </tbody></table>
-    </div>
-    <p class="note" style="margin:2px 0 0"><b>Two different "prices" — don't confuse them:</b> the <b>purchase price</b> (Set Pricing, step 3) is the money a customer pays to <em>buy</em> a credit unit; the <b>redemption rate</b> (Redemption Model, step 4) is a gate/display value used when <em>spending</em> credits — it is <b>not</b> a currency conversion.</p>
-    <div class="steps" style="margin-top:14px">
-      <div class="step"><span class="n">1</span><div><h3>Setup → Get Started (availability)</h3><p>Turn on <b>Global Availability &amp; localisation</b>, then enable all 5 countries (NG · US · UK · KE · DE).</p></div></div>
-      <div class="step"><span class="n">2</span><div><h3>Setup → Entitlement Packages (purchasable quantities)</h3><p>Packaging = Quantity → add three: <b>1,000 Credits · 5,000 Credits · 10,000 Credits</b> (Display Name = the same text). Set <b>5,000</b> as default. These are the quantities a customer can buy; their money price comes from step 3.</p></div></div>
-      <div class="step"><span class="n">3</span><div><h3>Setup → Set Pricing — the price of a credit unit</h3><p>This is the step we were missing. Choose a pricing model (credit schemes allow <span class="mono">Per Unit · Volume · Tiered · Stair-Step</span>) and set the <b>money price per credit</b>, per country. Canonical: <b>Per Unit — 1 credit = 1 unit of local currency</b>: <span class="mono">NG ₦1 · US $1 · UK £1 · KE KSh 1 · DE €1</span> per credit (so a 5,000-credit pack costs 5,000 of that currency). To exercise a bulk discount instead, use <b>Volume</b> (e.g. 10,000+ credits at 5% off).</p></div></div>
-      <div class="step"><span class="n">4</span><div><h3>Setup → Redemption Model — one rate per currency</h3><p>"What is the value of one unit of this prepaid credit…?" Add a <b>Default Currency Redemption Rule</b> for each currency, all <b>1 : 1</b>, all <b>enabled</b>: <span class="mono">1 NGN = 1 Credit · 1 USD = 1 Credit · 1 GBP = 1 Credit · 1 KES = 1 Credit · 1 EUR = 1 Credit</span>. <b>A currency with no enabled rate can't be redeemed</b> — that's the gate (display/gate only, not a conversion).</p></div></div>
-      <div class="step"><span class="n">5</span><div><h3>Setup → (optional) Customer Type Overrides</h3><p>Add a customer-type-specific rate with an <b>overdraft limit</b> (e.g. Business customers, overdraft 5,000). This is the <b>only</b> place overdraft is enabled; without it a balance can never go negative.</p></div></div>
-      <div class="step"><span class="n">6</span><div><h3>Publish (Summary → Finish)</h3><p>Draft → active. Only a draft scheme can be deleted. <b>The scheme build ends here.</b></p></div></div>
-    </div>
-    <p class="note" style="margin:12px 0 0"><b>Accepting the credit is a product-side setting, not part of this build</b> — a consuming product enables <b>Accept pre-paid credit</b> (+ compatible schemes) in <em>its own</em> general settings when you build that product. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores it): record as a finding, not a gate. <b>Grant a balance, Redeem and Reverse</b> are run as scenarios <span class="mono">G1 · G2 · G3</span> (§05), not build steps.</p>
-
-    <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Edge cases — tick each</p>
-    <div class="checks" data-group="PPC">
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC1</span> <span class="desc"><b>Expired lot still redeemable</b> — a lot past <span class="mono">expires_at</span> whose status is still <span class="mono">active</span> can be spent (nothing flips it to expired). <b>Flag as a likely bug.</b></span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC2</span> <span class="desc"><b>Insufficient balance → 422 + full rollback</b> (no partial spend of the requested amount)</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC3</span> <span class="desc"><b>Currency mismatch</b> — USD lots can't cover an NGN redeem; single-currency, no conversion</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC4</span> <span class="desc"><b>Two schemes, same currency, no <span class="mono">scheme_id</span> → 422</b> "specify scheme_id"</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC5</span> <span class="desc"><b>Burn order</b> — free-before-paid when <span class="mono">burn_free_credit_first</span>; then fifo/lifo/fefo per <span class="mono">credit_consumption_rule</span></span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC6</span> <span class="desc"><b>Overdraft</b> — balance goes negative only when an override sets <span class="mono">overdraft_limit</span> &gt; 0</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC7</span> <span class="desc"><b>Rate disabled after a balance exists</b> — balance becomes non-redeemable (gate) but still shows in the summary</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC8</span> <span class="desc"><b>Grant amount ≤ 0</b> — manual rejected (amount &gt; 0 required); sale line without <span class="mono">prepaid_grant_amount</span> silently skipped</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC9</span> <span class="desc"><b>Reverse</b> restores lots + ledger; reversing the same group twice → 422</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC10</span> <span class="desc"><b>⚠ Redeem with acceptance OFF still succeeds</b> (acceptance config never checked at runtime) — finding</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC11</span> <span class="desc"><b>⚠ Over-redeem beyond an invoice total isn't prevented</b> (no invoice awareness) — a double-redeem double-spends the balance — finding</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC12</span> <span class="desc"><b>⚠ Runtime prepaid routes have no permission middleware</b> — check whether a non-privileged user can grant/redeem — authz finding</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC13</span> <span class="desc"><b>Reflection</b> — the customer's credit balance panel shows grant / consume / reverse history and the correct remaining balance per currency &amp; per scheme</span></div></label>
-      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC14</span> <span class="desc"><b>⚠ A credit operation should record a Usage Event</b> on the metering stream (grant / redeem / reverse). <b>Verified in code: NOT implemented</b> — the credit path writes only a prepaid-credit ledger row and never feeds the UsageEvent metering system (the ledger's <span class="mono">usage_event</span> reference type is unused for this). Flag as a gap.</span></div></label>
-    </div>
-
-    <h3 style="margin:28px 0 10px;font-size:16px">Reward points <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Nimbus Rewards · Settings → Reward Points → Create</span></h3>
-    <div class="fillcard">
-      <p class="meta">Create form (sibling of the credit scheme)</p>
-      <table class="kv"><tbody>
-        <tr><td>Name of Reward Point</td><td><b>Nimbus Rewards</b></td></tr>
-        <tr><td>Describe this Reward Point</td><td>Loyalty points earned on purchases, redeemable against invoices.</td></tr>
-        <tr><td>Currency Unit — Singular / Plural</td><td><b>Point</b> / <b>Points</b></td></tr>
-        <tr><td>Currency Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
-        <tr><td>Spend Promotional Points First</td><td>ON</td></tr>
-        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
-      </tbody></table>
-      <p class="note" style="margin:10px 0 0">Setup mirrors the credit scheme (availability · redemption rate per currency · packages). Set the same 1:1 rate per currency. Lower-traffic edge type — treat findings as discovery.</p>
-    </div>
-
-    <p class="lede" style="margin-top:0">Prolifi has a <b>general, merchant-facing metering system</b> (Manage → <span class="mono">Usage</span>). It's <b>not</b> credit-specific — it measures any usage.
-      Two registries, built in order: <b>①&nbsp;Usage metering</b> defines the events and logs when they happen; <b>②&nbsp;Event metrics</b> aggregate those
-      events into numbers. A metered feature is then measured by pointing its <b>Usage Metric</b> at one of these metrics — so build both <b>before</b> the feature.</p>
-
     <h3 style="margin:24px 0 10px;font-size:16px"><span class="mono" style="color:var(--accent-ink)">①</span> Usage metering <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— event types &amp; occurrences · Manage → Usage → Events / Event Streams</span></h3>
     <p class="lede" style="margin-top:0">Register an <b>event type</b> (a level + typed properties) for each thing you meter; occurrences ("it happened") are logged to its <b>Event Stream</b> (single or bulk).</p>
     <div class="table-scroll">
@@ -587,20 +527,34 @@
       then details on step 2. <b>Entitlement Packaging</b> (Quantity / Range; "Dependent" is present but <b>disabled in the UI</b> — flag
       it — so a dependent feature can't be created here). Package options and prices come later, in setup and in each plan's mapping.
       Create all twelve below.</p>
-    <div class="grid two">
-      <div class="fillcard">
-        <p class="meta">Metered Allowance · Quantity</p>
-        <h3 style="margin:2px 0 8px">Cloud Storage</h3>
-        <table class="kv"><tbody>
-          <tr><td>Feature Type (step 1)</td><td>Metered Allowance</td></tr>
-          <tr><td>Feature Name</td><td><b>Cloud Storage</b></td></tr>
-          <tr><td>Usage Metric</td><td>Storage (GB)</td></tr>
-          <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
-          <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
-          <tr><td>This feature is offered free</td><td>OFF</td></tr>
+    <div class="fillcard" style="margin-bottom:14px">
+      <p class="meta">Metered Allowance · Quantity · complete build (template — is this the shape you want for all 12?)</p>
+      <h3 style="margin:2px 0 10px">Cloud Storage</h3>
+      <table class="kv"><tbody>
+        <tr><td>Feature Type (step 1)</td><td>Metered Allowance</td></tr>
+        <tr><td>Feature Name</td><td><b>Cloud Storage</b></td></tr>
+        <tr><td>Describe this feature</td><td>Cloud file storage, measured in GB.</td></tr>
+        <tr><td>Usage Metric</td><td>Storage (GB) — event <span class="mono">Storage Snapshot</span> → metric <span class="mono">Storage Used</span> (max)</td></tr>
+        <tr><td>Entitlement Packaging</td><td>Quantity</td></tr>
+        <tr><td>Product Tax Category</td><td>Digital Services</td></tr>
+        <tr><td>This feature is offered free</td><td>OFF</td></tr>
+      </tbody></table>
+      <p class="subh">Setup → Availability</p>
+      <p class="note" style="margin:0 0 8px">Global Availability ON · all 5 countries (NG · US · UK · KE · DE). <b>Rule ①</b>: not available in a country → not mappable to a plan there.</p>
+      <p class="subh">Setup → Entitlement Packages (Quantity options)</p>
+      <p class="note" style="margin:0 0 8px">50 GB · <b>100 GB (default)</b> · 250 GB · 500 GB · Unlimited.</p>
+      <p class="subh">Setup → Pricing — main scheme <span class="mono">Storage — Per Unit</span> (Per Unit, price per GB)</p>
+      <div class="table-scroll" style="box-shadow:none;border:1px solid var(--line-2)">
+        <table style="min-width:0"><thead><tr><th class="mono">NG · NGN</th><th class="mono">US · USD</th><th class="mono">UK · GBP</th><th class="mono">KE · KES</th><th class="mono">DE · EUR</th></tr></thead><tbody>
+          <tr><td class="mono">₦150</td><td class="mono">$0.10</td><td class="mono">£0.08</td><td class="mono">KSh 13</td><td class="mono">€0.09</td></tr>
         </tbody></table>
-        <p class="note" style="margin:8px 0 0"><b>Entitlement Packages</b> (setup step): 50 GB · <b>100 GB (default)</b> · 250 GB · 500 GB · Unlimited.</p>
       </div>
+      <p class="subh">Alternate pricing scheme</p>
+      <p class="note" style="margin:0 0 8px"><span class="mono">Extra Storage — Volume</span> (Volume, per 50 GB block) — powers the <b>Extra Storage 50GB</b> add-on: NG ₦12,000 · US $8 · UK £6.50 · KE KSh 1,050 · DE €7.50.</p>
+      <p class="subh">Mapped onto plans (Set Entitlements)</p>
+      <p class="note" style="margin:0"><b>Starter</b> Fixed 50 GB (extension Switch Plan) · <b>Pro</b> Variable 250 GB incl, extra via <span class="mono">Storage — Per Unit</span> (extension User-can-extend, max 2,000 GB) · <b>Business</b> Fixed 500 GB (extension Buy Add-on → Extra Storage 50GB). Full mapping in the plan cards.</p>
+    </div>
+    <div class="grid two">
       <div class="fillcard">
         <p class="meta">Metered Consumption · Quantity</p>
         <h3 style="margin:2px 0 8px">API Calls</h3>
@@ -859,6 +813,69 @@
       </div>
     </div>
 
+    <h3 style="margin:28px 0 10px;font-size:16px">Pre-paid credit <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— build &amp; test walkthrough · after add-ons, before plans</span></h3>
+    <p class="lede" style="margin-top:0">Built entirely in the dashboard at <b>Product Catalog → Pre-paid Credits → Create</b>, then its
+      setup wizard. The <b>balance is real money, spent 1:1</b> — the redemption <b>rate</b> you set is a <b>gate + display only</b>,
+      not a currency conversion. Fill these values verbatim on the <b>Nimbus Credits</b> scheme.</p>
+    <div class="fillcard">
+      <p class="meta">Create form — <span class="mono">Pre-paid Credits → Create</span> (single slide-over)</p>
+      <table class="kv"><tbody>
+        <tr><td>Scheme Name</td><td><b>Nimbus Credits</b></td></tr>
+        <tr><td>Describe this scheme</td><td>Pre-paid wallet balance for API, SMS and usage-based features. <span class="note">(label says "optional" but the form requires it — flag)</span></td></tr>
+        <tr><td>Metric to describe a unit of value</td><td><b>Credits</b></td></tr>
+        <tr><td>Entitlement Packaging Method</td><td>Quantity</td></tr>
+        <tr><td>Credit Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
+        <tr><td>Burn Free/Promotional Credit before Paid Credit</td><td>ON</td></tr>
+        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
+      </tbody></table>
+    </div>
+    <p class="note" style="margin:2px 0 0"><b>Two different "prices" — don't confuse them:</b> the <b>purchase price</b> (Set Pricing, step 3) is the money a customer pays to <em>buy</em> a credit unit; the <b>redemption rate</b> (Redemption Model, step 4) is a gate/display value used when <em>spending</em> credits — it is <b>not</b> a currency conversion.</p>
+    <div class="steps" style="margin-top:14px">
+      <div class="step"><span class="n">1</span><div><h3>Setup → Get Started (availability)</h3><p>Turn on <b>Global Availability &amp; localisation</b>, then enable all 5 countries (NG · US · UK · KE · DE).</p></div></div>
+      <div class="step"><span class="n">2</span><div><h3>Setup → Entitlement Packages (purchasable quantities)</h3><p>Packaging = Quantity → add three: <b>1,000 Credits · 5,000 Credits · 10,000 Credits</b> (Display Name = the same text). Set <b>5,000</b> as default. These are the quantities a customer can buy; their money price comes from step 3.</p></div></div>
+      <div class="step"><span class="n">3</span><div><h3>Setup → Set Pricing — the price of a credit unit</h3><p>This is the step we were missing. Choose a pricing model (credit schemes allow <span class="mono">Per Unit · Volume · Tiered · Stair-Step</span>) and set the <b>money price per credit</b>, per country. Canonical: <b>Per Unit — 1 credit = 1 unit of local currency</b>: <span class="mono">NG ₦1 · US $1 · UK £1 · KE KSh 1 · DE €1</span> per credit (so a 5,000-credit pack costs 5,000 of that currency). To exercise a bulk discount instead, use <b>Volume</b> (e.g. 10,000+ credits at 5% off).</p></div></div>
+      <div class="step"><span class="n">4</span><div><h3>Setup → Redemption Model — one rate per currency</h3><p>"What is the value of one unit of this prepaid credit…?" Add a <b>Default Currency Redemption Rule</b> for each currency, all <b>1 : 1</b>, all <b>enabled</b>: <span class="mono">1 NGN = 1 Credit · 1 USD = 1 Credit · 1 GBP = 1 Credit · 1 KES = 1 Credit · 1 EUR = 1 Credit</span>. <b>A currency with no enabled rate can't be redeemed</b> — that's the gate (display/gate only, not a conversion).</p></div></div>
+      <div class="step"><span class="n">5</span><div><h3>Setup → (optional) Customer Type Overrides</h3><p>Add a customer-type-specific rate with an <b>overdraft limit</b> (e.g. Business customers, overdraft 5,000). This is the <b>only</b> place overdraft is enabled; without it a balance can never go negative.</p></div></div>
+      <div class="step"><span class="n">6</span><div><h3>Publish (Summary → Finish)</h3><p>Draft → active. Only a draft scheme can be deleted. <b>The scheme build ends here.</b></p></div></div>
+    </div>
+    <p class="note" style="margin:12px 0 0"><b>Accepting the credit is a product-side setting, not part of this build</b> — a consuming product enables <b>Accept pre-paid credit</b> (+ compatible schemes) in <em>its own</em> general settings when you build that product. <b>⚠ Config-only — NOT enforced at redemption runtime</b> (redemption ignores it): record as a finding, not a gate. <b>Grant a balance, Redeem and Reverse</b> are run as scenarios <span class="mono">G1 · G2 · G3</span> (§05), not build steps.</p>
+
+    <p style="font-weight:700;margin:22px 0 8px;font-size:14px">Edge cases — tick each</p>
+    <div class="checks" data-group="PPC">
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC1</span> <span class="desc"><b>Expired lot still redeemable</b> — a lot past <span class="mono">expires_at</span> whose status is still <span class="mono">active</span> can be spent (nothing flips it to expired). <b>Flag as a likely bug.</b></span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC2</span> <span class="desc"><b>Insufficient balance → 422 + full rollback</b> (no partial spend of the requested amount)</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC3</span> <span class="desc"><b>Currency mismatch</b> — USD lots can't cover an NGN redeem; single-currency, no conversion</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC4</span> <span class="desc"><b>Two schemes, same currency, no <span class="mono">scheme_id</span> → 422</b> "specify scheme_id"</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC5</span> <span class="desc"><b>Burn order</b> — free-before-paid when <span class="mono">burn_free_credit_first</span>; then fifo/lifo/fefo per <span class="mono">credit_consumption_rule</span></span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC6</span> <span class="desc"><b>Overdraft</b> — balance goes negative only when an override sets <span class="mono">overdraft_limit</span> &gt; 0</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC7</span> <span class="desc"><b>Rate disabled after a balance exists</b> — balance becomes non-redeemable (gate) but still shows in the summary</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC8</span> <span class="desc"><b>Grant amount ≤ 0</b> — manual rejected (amount &gt; 0 required); sale line without <span class="mono">prepaid_grant_amount</span> silently skipped</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC9</span> <span class="desc"><b>Reverse</b> restores lots + ledger; reversing the same group twice → 422</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC10</span> <span class="desc"><b>⚠ Redeem with acceptance OFF still succeeds</b> (acceptance config never checked at runtime) — finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC11</span> <span class="desc"><b>⚠ Over-redeem beyond an invoice total isn't prevented</b> (no invoice awareness) — a double-redeem double-spends the balance — finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC12</span> <span class="desc"><b>⚠ Runtime prepaid routes have no permission middleware</b> — check whether a non-privileged user can grant/redeem — authz finding</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC13</span> <span class="desc"><b>Reflection</b> — the customer's credit balance panel shows grant / consume / reverse history and the correct remaining balance per currency &amp; per scheme</span></div></label>
+      <label class="chk"><input type="checkbox"><div class="body"><span class="id">PC14</span> <span class="desc"><b>⚠ A credit operation should record a Usage Event</b> on the metering stream (grant / redeem / reverse). <b>Verified in code: NOT implemented</b> — the credit path writes only a prepaid-credit ledger row and never feeds the UsageEvent metering system (the ledger's <span class="mono">usage_event</span> reference type is unused for this). Flag as a gap.</span></div></label>
+    </div>
+
+    <h3 style="margin:28px 0 10px;font-size:16px">Reward points <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Nimbus Rewards · Settings → Reward Points → Create</span></h3>
+    <div class="fillcard">
+      <p class="meta">Create form (sibling of the credit scheme)</p>
+      <table class="kv"><tbody>
+        <tr><td>Name of Reward Point</td><td><b>Nimbus Rewards</b></td></tr>
+        <tr><td>Describe this Reward Point</td><td>Loyalty points earned on purchases, redeemable against invoices.</td></tr>
+        <tr><td>Currency Unit — Singular / Plural</td><td><b>Point</b> / <b>Points</b></td></tr>
+        <tr><td>Currency Consumption Rule</td><td>First-In First-Out (FIFO)</td></tr>
+        <tr><td>Spend Promotional Points First</td><td>ON</td></tr>
+        <tr><td>Proceed to setup after creating</td><td>ON</td></tr>
+      </tbody></table>
+      <p class="note" style="margin:10px 0 0">Setup mirrors the credit scheme (availability · redemption rate per currency · packages). Set the same 1:1 rate per currency. Lower-traffic edge type — treat findings as discovery.</p>
+    </div>
+
+    <p class="lede" style="margin-top:0">Prolifi has a <b>general, merchant-facing metering system</b> (Manage → <span class="mono">Usage</span>). It's <b>not</b> credit-specific — it measures any usage.
+      Two registries, built in order: <b>①&nbsp;Usage metering</b> defines the events and logs when they happen; <b>②&nbsp;Event metrics</b> aggregate those
+      events into numbers. A metered feature is then measured by pointing its <b>Usage Metric</b> at one of these metrics — so build both <b>before</b> the feature.</p>
+
     <h3 style="margin:28px 0 10px;font-size:16px">Standard plans <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">— Product Catalog → Plans → Create new Plan → then setup wizard</span></h3>
     <p class="lede" style="margin-top:0">Each plan = a short <b>create modal</b> (type + name + billing method) then a <b>setup wizard</b>:
       <span class="mono">Get Started (availability)</span> → <span class="mono">Features &amp; Entitlements</span> →
@@ -1095,7 +1112,7 @@
       <div class="card">
         <p class="meta">Build order recap</p>
         <ul style="margin:0">
-          <li>Usage events &amp; metrics → features → add-ons → reward points → <b>seat plans</b> → standard plans → team plan → occurrence → one-off products.</li>
+          <li>Usage metering → event metrics → features → add-ons → pre-paid credit → reward points → <b>seat plans</b> → standard plans → team plan → occurrence → one-off products.</li>
           <li>Nothing has a price until its <b>setup wizard</b>; publish needs the OTP from the shared inbox.</li>
           <li>Use these exact names, prices &amp; emails everywhere so reflection (group D) lines up.</li>
         </ul>
@@ -1111,6 +1128,9 @@
       <span class="tok">installment</span> <span class="tok">tiered / metered</span>
       <span class="tok">individual vs company</span> <span class="tok">online vs offline</span>
       <span class="tok" style="color:var(--muted)">coupon / cashback → later run</span></p>
+    <p class="lede" style="margin-top:0"><b>Run order</b> (groups are grouped by theme, but a plan must exist &amp; be published before it can be sold, so run them in this dependency order):
+      first the build in §02–§04, then <b>H</b> usage metering → <b>F</b> entitlement modes on plans → <b>E</b> plan lifecycle / <b>publish</b> →
+      <b>A</b> merchant selling → <b>B</b> customer purchase → <b>C</b> payment → <b>G</b> credit &amp; rewards billing. <b>D</b> reflection is the cross-check you run <em>after every</em> A/B/E/F/G scenario.</p>
 
     <div class="scen-group">
       <div class="gh"><span class="tag">A</span> Merchant-initiated selling</div>
